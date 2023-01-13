@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:the49="https://schemas.the49.com/dotnet/2023/maui"
+             x:Class="The49.Maui.BottomSheet.MainPage"
+             x:Name="this"
+             the49:Insets.EdgeToEdge="True"
+             >
+    <ContentPage.Resources>
+        <Style TargetType="Grid">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor"
+                                        Value="{DynamicResource ColorSurface}" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+    </ContentPage.Resources>
+    <Grid RowDefinitions="Auto, *">
+        <the49:TopInsetView BackgroundColor="{StaticResource Primary}" x:Name="Header">
+            <ContentView HeightRequest="128" Padding="16, 0, 0, 8">
+                <Label
+                    Text="Maui.BottomSheet"
+                    Style="{StaticResource HeadlineLarge}"
+                    TextColor="{StaticResource White}"
+                    VerticalOptions="End" />
+            </ContentView>
+        </the49:TopInsetView>
+        <CollectionView Grid.Row="1" Margin="0, -72, 0, 0" Scrolled="list_Scrolled" ItemsSource="{Binding Demos, Source={x:Reference this}}" SelectionChanged="list_SelectionChanged" SelectionMode="Single" x:Name="list" Style="{StaticResource ListItem}">
+            <CollectionView.Header>
+                <ContentView HeightRequest="72" />
+            </CollectionView.Header>
+            <CollectionView.Footer>
+                <the49:BottomInsetView />
+            </CollectionView.Footer>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="Auto, *" Padding="16, 4" HeightRequest="72">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" />
+                        </Grid.GestureRecognizers>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="{Binding Title}" Style="{StaticResource BodyLarge}" />
+                            <Label Text="{Binding Description}" Style="{StaticResource BodyMedium}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
