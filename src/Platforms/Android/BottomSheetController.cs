@@ -58,32 +58,44 @@ public class BottomSheetController : IBottomSheetController
     public void Show()
     {
         var navigationRootManager = _windowMauiContext.Services.GetRequiredService<NavigationRootManager>();
+        ViewGroup view = null;
+
         if (navigationRootManager.RootView is Microsoft.Maui.Platform.ContainerView cv && cv.MainView is DrawerLayout drawerLayout)
         {
-            var li = LayoutInflater.From(_windowMauiContext.Context);
-            _coordinatorLayout = (CoordinatorLayout)li.Inflate(Resource.Layout.custom_bottom_sheet, null);
-            var layout = BottomSheetManager.CreateLayout(_page, _windowMauiContext);
-            _frame = _coordinatorLayout.FindViewById<FrameLayout>(Resource.Id.design_bottom_sheet);
-            _frame.AddView(layout);
-            drawerLayout.AddView(_coordinatorLayout, new DrawerLayout.LayoutParams(DrawerLayout.LayoutParams.MatchParent, DrawerLayout.LayoutParams.MatchParent));
-
-
-            _behavior = (BottomSheetBehavior)((CoordinatorLayout.LayoutParams)_frame.LayoutParameters).Behavior;
-            _behavior.State = BottomSheetBehavior.StateHidden;
-
-            var callback = new BottomSheetPageCallback(_page);
-            callback.StateChanged += Callback_StateChanged;
-            Behavior.AddBottomSheetCallback(callback);
-            _page.Dispatcher.Dispatch(() =>
-            {
-                UpdateBackground();
-                Layout();
-                
-                Behavior.State = Behavior.SkipCollapsed ? BottomSheetBehavior.StateExpanded : BottomSheetBehavior.StateCollapsed;
-
-                _behavior.Hideable = _page.Cancelable;
-            });
+            view = drawerLayout;
         }
+        else if (navigationRootManager.RootView is CoordinatorLayout coordinatorLayout)
+        {
+            view = coordinatorLayout;
+        }
+        else
+        {
+            throw new Exception("Unrecognized RootView");
+        }
+
+        var li = LayoutInflater.From(_windowMauiContext.Context);
+        _coordinatorLayout = (CoordinatorLayout)li.Inflate(Resource.Layout.custom_bottom_sheet, null);
+        var layout = BottomSheetManager.CreateLayout(_page, _windowMauiContext);
+        _frame = _coordinatorLayout.FindViewById<FrameLayout>(Resource.Id.design_bottom_sheet);
+        _frame.AddView(layout);
+        view.AddView(_coordinatorLayout, new ViewGroup.LayoutParams(DrawerLayout.LayoutParams.MatchParent, DrawerLayout.LayoutParams.MatchParent));
+
+
+        _behavior = (BottomSheetBehavior)((CoordinatorLayout.LayoutParams)_frame.LayoutParameters).Behavior;
+        _behavior.State = BottomSheetBehavior.StateHidden;
+
+        var callback = new BottomSheetPageCallback(_page);
+        callback.StateChanged += Callback_StateChanged;
+        Behavior.AddBottomSheetCallback(callback);
+        _page.Dispatcher.Dispatch(() =>
+        {
+            UpdateBackground();
+            Layout();
+
+            Behavior.State = Behavior.SkipCollapsed ? BottomSheetBehavior.StateExpanded : BottomSheetBehavior.StateCollapsed;
+
+            _behavior.Hideable = _page.Cancelable;
+        });
     }
 
     private void Callback_StateChanged(object sender, EventArgs e)
