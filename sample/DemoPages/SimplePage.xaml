@@ -21,7 +21,7 @@
     <VerticalStackLayout Spacing="16">
         <HorizontalStackLayout Spacing="16" Padding="16, 0">
             <Border StrokeShape="RoundRectangle 8" StrokeThickness="0">
-                <Image Clip="RoundRectangle 14" Source="spicy.jpg" HeightRequest="80" WidthRequest="80" />
+                <Image Source="spicy.jpg" HeightRequest="80" WidthRequest="80" />
             </Border>
             <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="FillAndExpand">
                 <Label Text="Hot and spicy" />
