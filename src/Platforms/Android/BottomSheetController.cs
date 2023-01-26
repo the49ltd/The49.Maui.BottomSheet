@@ -5,6 +5,7 @@ using Android.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using AndroidX.DrawerLayout.Widget;
 using Android.Content.Res;
+using Microsoft.Maui.Controls;
 
 namespace The49.Maui.BottomSheet;
 
@@ -36,7 +37,17 @@ public class BottomSheetController : IBottomSheetController
 
     void Dispose()
     {
-        _coordinatorLayout.RemoveFromParent();
+        var navigationRootManager = _windowMauiContext.Services.GetRequiredService<NavigationRootManager>();
+        if (navigationRootManager.RootView is CoordinatorLayout coordinatorLayout && _coordinatorLayout == coordinatorLayout)
+        {
+            _frame.RemoveFromParent();
+        }
+        else
+        {
+            _coordinatorLayout.RemoveFromParent();
+        }
+        _frame = null;
+        _coordinatorLayout = null;
     }
 
     public void Layout()
@@ -55,34 +66,45 @@ public class BottomSheetController : IBottomSheetController
         }
     }
 
-    public void Show()
+    void SetupCoordinatorLayout()
     {
         var navigationRootManager = _windowMauiContext.Services.GetRequiredService<NavigationRootManager>();
-        ViewGroup view = null;
 
-        if (navigationRootManager.RootView is Microsoft.Maui.Platform.ContainerView cv && cv.MainView is DrawerLayout drawerLayout)
+        if (navigationRootManager.RootView is ContainerView cv && cv.MainView is DrawerLayout drawerLayout)
         {
-            view = drawerLayout;
+            _coordinatorLayout = new CoordinatorLayout(_windowMauiContext.Context);
+            _coordinatorLayout.SetFitsSystemWindows(true);
+
+            drawerLayout.AddView(_coordinatorLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
         }
         else if (navigationRootManager.RootView is CoordinatorLayout coordinatorLayout)
         {
-            view = coordinatorLayout;
+            _coordinatorLayout = coordinatorLayout;
         }
         else
         {
             throw new Exception("Unrecognized RootView");
         }
 
-        var li = LayoutInflater.From(_windowMauiContext.Context);
-        _coordinatorLayout = (CoordinatorLayout)li.Inflate(Resource.Layout.custom_bottom_sheet, null);
-        var layout = BottomSheetManager.CreateLayout(_page, _windowMauiContext);
-        _frame = _coordinatorLayout.FindViewById<FrameLayout>(Resource.Id.design_bottom_sheet);
-        _frame.AddView(layout);
-        view.AddView(_coordinatorLayout, new ViewGroup.LayoutParams(DrawerLayout.LayoutParams.MatchParent, DrawerLayout.LayoutParams.MatchParent));
+        _frame = new FrameLayout(new ContextThemeWrapper(_windowMauiContext.Context, Resource.Style.Widget_Material3_BottomSheet_Modal), null, 0);
 
-
-        _behavior = (BottomSheetBehavior)((CoordinatorLayout.LayoutParams)_frame.LayoutParameters).Behavior;
+        _behavior = new BottomSheetBehavior(new ContextThemeWrapper(_windowMauiContext.Context, Resource.Style.Widget_Material3_BottomSheet_Modal), null);
         _behavior.State = BottomSheetBehavior.StateHidden;
+
+        _coordinatorLayout.AddView(_frame, new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
+        {
+            Gravity = (int)(GravityFlags.CenterHorizontal | GravityFlags.Top),
+            Behavior = _behavior,
+        });
+    }
+
+    public void Show()
+    {
+        SetupCoordinatorLayout();
+
+        var layout = BottomSheetManager.CreateLayout(_page, _windowMauiContext);
+        
+        _frame.AddView(layout);
 
         var callback = new BottomSheetPageCallback(_page);
         callback.StateChanged += Callback_StateChanged;
