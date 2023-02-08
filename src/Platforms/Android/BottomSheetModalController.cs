@@ -7,6 +7,7 @@ using Google.Android.Material.BottomSheet;
 using AndroidX.AppCompat.App;
 using Android.Widget;
 using Android.Content.Res;
+using Android.Content;
 
 namespace The49.Maui.BottomSheet;
 
@@ -50,7 +51,6 @@ public class BottomSheetModalController : BottomSheetDialogFragment, IBottomShee
         Cancelable = _sheet.Cancelable;
         d.Behavior.Hideable = _sheet.Cancelable;
         var callback = new BottomSheetCallback(_sheet);
-        callback.StateChanged += OnStateChanged;
         d.Behavior.AddBottomSheetCallback(callback);
 
         d.ShowEvent += (s, e) =>
@@ -63,12 +63,10 @@ public class BottomSheetModalController : BottomSheetDialogFragment, IBottomShee
         return dialog;
     }
 
-    void OnStateChanged(object sender, EventArgs e)
+    public override void OnDismiss(IDialogInterface dialog)
     {
-        if (Behavior?.State == BottomSheetBehavior.StateHidden)
-        {
-            _sheet.NotifyDismissed();
-        }
+        base.OnDismiss(dialog);
+        _sheet.NotifyDismissed();
     }
 
     public void UpdateBackground()

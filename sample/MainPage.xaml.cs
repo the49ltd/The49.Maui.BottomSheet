@@ -168,6 +168,7 @@ public partial class MainPage : ContentPage
     void OpenDismissed()
     {
         var page = new SimplePage();
+        page.IsModal = true;
         page.Dismissed += (s, e) =>
         {
             DisplayAlert("Sheet was dismissed", e == DismissOrigin.Gesture ? "Sheet was dismissed by a user gesture" : "Sheet was dismissed programmatically", "close");
