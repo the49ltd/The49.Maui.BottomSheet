@@ -9,7 +9,7 @@ public partial class BottomSheetHandler
 
     partial void Dismiss(BottomSheet view, object request)
     {
-        view.Controller?.DismissViewController(true, delegate { });
+        view.Controller?.DismissViewController(true, view.NotifyDismissed);
     }
 
     partial void UpdateState(BottomSheet view)

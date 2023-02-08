@@ -23,15 +23,30 @@ internal class BottomSheetPageContainer : UIView
         _view.Frame = new CGRect(0, 0, Bounds.Width, r.Request.Height);
     }
 }
+
+internal class SheetControllerDelegate: UISheetPresentationControllerDelegate
+{
+    BottomSheet _sheet;
+
+    public SheetControllerDelegate(BottomSheet sheet) : base() {
+        _sheet = sheet;
+    }
+    public override void DidDismiss(UIPresentationController presentationController)
+    {
+        _sheet.NotifyDismissed();
+    }
+}
+
 public class BottomSheetPageViewController : UIViewController
 {
     IMauiContext _windowMauiContext;
     BottomSheet _sheet;
 
-    public BottomSheetPageViewController(IMauiContext windowMauiContext, BottomSheet page) : base()
+    public BottomSheetPageViewController(IMauiContext windowMauiContext, BottomSheet sheet) : base()
     {
         _windowMauiContext = windowMauiContext;
-        _sheet = page;
+        _sheet = sheet;
+        SheetPresentationController.Delegate = new SheetControllerDelegate(_sheet);
     }
 
     public override void ViewDidLoad()
@@ -51,15 +66,6 @@ public class BottomSheetPageViewController : UIViewController
         else
         {
             View.BackgroundColor = UIColor.SystemBackground;
-        }
-    }
-
-    public override void ViewWillDisappear(bool animated)
-    {
-        base.ViewWillDisappear(animated);
-        if (IsBeingDismissed)
-        {
-            _sheet.NotifyDismissed();
         }
     }
     public override void ViewDidLayoutSubviews()
