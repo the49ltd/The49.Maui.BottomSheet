@@ -4,7 +4,7 @@ namespace The49.Maui.BottomSheet;
 
 public partial class AnchorDetent : Detent
 {
-    partial void UpdateHeight(BottomSheetPage page, double maxSheetHeight)
+    partial void UpdateHeight(BottomSheet page, double maxSheetHeight)
     {
         if (Anchor == null)
         {

@@ -5,7 +5,7 @@ namespace The49.Maui.BottomSheet;
 
 public partial class AnchorDetent
 {
-    partial void UpdateHeight(BottomSheetPage page, double maxSheetHeight)
+    partial void UpdateHeight(BottomSheet page, double maxSheetHeight)
     {
         var r = page.Measure(page.Window.Width, maxSheetHeight);
         page.Arrange(new Rect(new Point(0, 0), r.Request));

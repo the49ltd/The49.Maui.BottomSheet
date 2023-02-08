@@ -7,7 +7,7 @@ public static class MauiAppBuilderExtensions
     {
         return builder.ConfigureMauiHandlers(cfg =>
         {
-            cfg.AddHandler<BottomSheetPage, BottomSheetPageHandler>();
+            cfg.AddHandler<BottomSheet, BottomSheetHandler>();
         });
     }
 }

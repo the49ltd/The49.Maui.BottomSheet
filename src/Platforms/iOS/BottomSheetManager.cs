@@ -3,7 +3,7 @@ namespace The49.Maui.BottomSheet;
 
 internal partial class BottomSheetManager
 {
-    static partial void PlatformShow(Window window, BottomSheetPage page)
+    static partial void PlatformShow(Window window, BottomSheet page)
     {
         page.Parent = window;
         var controller = new BottomSheetPageViewController(window.Handler.MauiContext, page);

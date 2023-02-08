@@ -5,8 +5,6 @@ using Microsoft.Maui.Platform;
 using AView = Android.Views.View;
 using Google.Android.Material.BottomSheet;
 using AndroidX.AppCompat.App;
-using Microsoft.Maui.Controls;
-using Org.Apache.Commons.Logging;
 using Android.Widget;
 using Android.Content.Res;
 
@@ -14,7 +12,7 @@ namespace The49.Maui.BottomSheet;
 
 public class BottomSheetModalController : BottomSheetDialogFragment, IBottomSheetController
 {
-    readonly BottomSheetPage _page;
+    readonly BottomSheet _sheet;
     readonly IMauiContext _mauiWindowContext;
     NavigationRootManager? _navigationRootManager;
     BottomSheetBehavior _behavior;
@@ -27,16 +25,18 @@ public class BottomSheetModalController : BottomSheetDialogFragment, IBottomShee
 
     public BottomSheetBehavior Behavior => _behavior;
 
-    public BottomSheetModalController(IMauiContext mauiContext, BottomSheetPage page)
+    public BottomSheetModalController(IMauiContext mauiContext, BottomSheet page)
     {
         _navigationRootManager = mauiContext.Services.GetRequiredService<NavigationRootManager>();
-        _page = page;
+        _sheet = page;
         _mauiWindowContext = mauiContext;
     }
 
     public override AView OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        return BottomSheetManager.CreateLayout(_page, _mauiWindowContext);
+        var layout = BottomSheetManager.CreateLayout(_sheet, _mauiWindowContext);
+        layout.LayoutChange += (s, e) => Layout();
+        return layout;
     }
 
     public override Dialog OnCreateDialog(Bundle savedInstanceState)
@@ -47,9 +47,11 @@ public class BottomSheetModalController : BottomSheetDialogFragment, IBottomShee
 
        _behavior = d.Behavior;
 
-        Cancelable = _page.Cancelable;
-        d.Behavior.Hideable = _page.Cancelable;
-        d.Behavior.AddBottomSheetCallback(new BottomSheetPageCallback(_page));
+        Cancelable = _sheet.Cancelable;
+        d.Behavior.Hideable = _sheet.Cancelable;
+        var callback = new BottomSheetCallback(_sheet);
+        callback.StateChanged += OnStateChanged;
+        d.Behavior.AddBottomSheetCallback(callback);
 
         d.ShowEvent += (s, e) =>
         {
@@ -61,10 +63,18 @@ public class BottomSheetModalController : BottomSheetDialogFragment, IBottomShee
         return dialog;
     }
 
+    void OnStateChanged(object sender, EventArgs e)
+    {
+        if (Behavior?.State == BottomSheetBehavior.StateHidden)
+        {
+            _sheet.NotifyDismissed();
+        }
+    }
+
     public void UpdateBackground()
     {
         var frame = (FrameLayout)View?.Parent;
-        Paint paint = _page.BackgroundBrush;
+        Paint paint = _sheet.BackgroundBrush;
         if (frame != null && paint != null)
         {
             frame.BackgroundTintList = ColorStateList.ValueOf(paint.ToColor().ToPlatform());
@@ -78,6 +88,6 @@ public class BottomSheetModalController : BottomSheetDialogFragment, IBottomShee
 
     public void Layout()
     {
-        BottomSheetManager.LayoutDetents(Behavior, (ViewGroup)View, _page, _page.Window.Height);
+        BottomSheetManager.LayoutDetents(Behavior, (ViewGroup)View, _sheet, _sheet.Window.Height);
     }
 }

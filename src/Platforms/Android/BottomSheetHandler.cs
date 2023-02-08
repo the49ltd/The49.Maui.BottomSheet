@@ -9,11 +9,6 @@ public partial class BottomSheetHandler
 
     partial void Dismiss(BottomSheet view, object request)
     {
-        view.Controller?.DismissViewController(true, delegate { });
-    }
-
-    partial void UpdateState(BottomSheet view)
-    {
-        // Can't do that in iOS16 as custom detents cannot be selected
+        view.Controller?.Dismiss();
     }
 }

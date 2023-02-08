@@ -7,7 +7,7 @@ public partial class HeightDetent : Detent
 {
     [AutoBindable]
     readonly double height;
-    public override double GetHeight(BottomSheetPage page, double maxSheetHeight)
+    public override double GetHeight(BottomSheet page, double maxSheetHeight)
     {
         return Height;
     }

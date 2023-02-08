@@ -2,7 +2,7 @@
 
 public partial class ContentDetent : Detent
 {
-    public override double GetHeight(BottomSheetPage page, double maxSheetHeight)
+    public override double GetHeight(BottomSheet page, double maxSheetHeight)
     {
         if (page.Height == -1)
         {

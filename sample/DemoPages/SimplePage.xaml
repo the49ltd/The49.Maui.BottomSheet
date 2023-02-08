@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<the49:BottomSheetPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<the49:BottomSheet xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:the49="https://schemas.the49.com/dotnet/2023/maui"
              x:Class="The49.Maui.BottomSheet.DemoPages.SimplePage"
-             Title="SimplePage"
              x:Name="this"
              Padding="16, 32">
-    <the49:BottomSheetPage.Resources>
+    <the49:BottomSheet.Resources>
         <Style TargetType="Button">
             <Setter Property="BackgroundColor" Value="Transparent" />
             <Setter Property="TextColor" Value="Black" />
             <Setter Property="HorizontalOptions" Value="StartAndExpand" />
         </Style>
-    </the49:BottomSheetPage.Resources>
+    </the49:BottomSheet.Resources>
     <!--<the49:BottomSheetPage.Detents>
         <the49:FullscreenDetent />
         <the49:ContentDetent />
@@ -37,7 +36,7 @@
             </BindableLayout.ItemTemplate>
         </VerticalStackLayout>
     </VerticalStackLayout>
-</the49:BottomSheetPage>
+</the49:BottomSheet>
 <!-- Photo by <a href="https://unsplash.com/@medion4you?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Norbert Braun
 </a> on
 <a href="https://unsplash.com/photos/iBsmi-wCXNE?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>

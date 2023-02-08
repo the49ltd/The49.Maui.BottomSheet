@@ -2,7 +2,7 @@
 
 public partial class FullscreenDetent : Detent
 {
-    public override double GetHeight(BottomSheetPage page, double maxSheetHeight)
+    public override double GetHeight(BottomSheet page, double maxSheetHeight)
     {
         return maxSheetHeight;
     }

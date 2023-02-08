@@ -7,7 +7,7 @@ public partial class RatioDetent : Detent
 {
     [AutoBindable]
     readonly float ratio;
-    public override double GetHeight(BottomSheetPage page, double maxSheetHeight)
+    public override double GetHeight(BottomSheet page, double maxSheetHeight)
     {
         return maxSheetHeight * Ratio;
     }

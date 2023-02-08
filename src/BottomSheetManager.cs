@@ -2,17 +2,17 @@
 
 internal partial class BottomSheetManager
 {
-    internal static void Show(Microsoft.Maui.Controls.Window window, BottomSheetPage page)
+    internal static void Show(Window window, BottomSheet sheet)
     {
-        PlatformShow(window, page);
-        page.LayoutChanged += Page_LayoutChanged;
+        PlatformShow(window, sheet);
+        sheet.SizeChanged += OnSizeChanged;
     }
 
-    static void Page_LayoutChanged(object sender, EventArgs e)
+    static void OnSizeChanged(object sender, EventArgs e)
     {
-        PlatformLayout((BottomSheetPage)sender);
+        PlatformLayout((BottomSheet)sender);
     }
 
-    static partial void PlatformShow(Microsoft.Maui.Controls.Window window, BottomSheetPage page);
-    static partial void PlatformLayout(BottomSheetPage page);
+    static partial void PlatformShow(Window window, BottomSheet sheet);
+    static partial void PlatformLayout(BottomSheet sheet);
 }

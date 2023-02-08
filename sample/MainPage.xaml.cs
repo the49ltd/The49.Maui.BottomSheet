@@ -73,6 +73,12 @@ public partial class MainPage : ContentPage
             Description = "specify a BackgroundColor for the sheet",
             Command = new Command(OpenBackgroundSheet),
         },
+        new DemoEntry
+        {
+            Title = "Dismissed",
+            Description = "listen to the dismissed event",
+            Command = new Command(OpenDismissed),
+        },
     };
 
     private void OpenSimpleSheet()
@@ -155,6 +161,16 @@ public partial class MainPage : ContentPage
         page.Detents = new DetentsCollection()
         {
             new HeightDetent() { Height = 240 },
+        };
+        page.Show(Window);
+    }
+
+    void OpenDismissed()
+    {
+        var page = new SimplePage();
+        page.Dismissed += (s, e) =>
+        {
+            DisplayAlert("Sheet was dismissed", e == DismissOrigin.Gesture ? "Sheet was dismissed by a user gesture" : "Sheet was dismissed programmatically", "close");
         };
         page.Show(Window);
     }

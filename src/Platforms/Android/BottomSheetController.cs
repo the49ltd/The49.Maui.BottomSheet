@@ -5,7 +5,6 @@ using Android.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using AndroidX.DrawerLayout.Widget;
 using Android.Content.Res;
-using Microsoft.Maui.Controls;
 
 namespace The49.Maui.BottomSheet;
 
@@ -21,12 +20,12 @@ public class BottomSheetController : IBottomSheetController
     ViewGroup _frame;
 
     IMauiContext _windowMauiContext { get; }
-    BottomSheetPage _page { get; }
+    BottomSheet _sheet { get; }
 
-    public BottomSheetController(IMauiContext windowMauiContext, BottomSheetPage page)
+    public BottomSheetController(IMauiContext windowMauiContext, BottomSheet sheet)
     {
         _windowMauiContext = windowMauiContext;
-        _page = page;
+        _sheet = sheet;
     }
 
     public void Dismiss()
@@ -53,13 +52,13 @@ public class BottomSheetController : IBottomSheetController
     public void Layout()
     {
         // TODO: verify that, maybe handle statusbar and navigationbar
-        var maxSheetHeight = _page.Window.Height;
-        BottomSheetManager.LayoutDetents(_behavior, _frame, _page, maxSheetHeight);
+        var maxSheetHeight = _sheet.Window.Height;
+        BottomSheetManager.LayoutDetents(_behavior, _frame, _sheet, maxSheetHeight);
     }
 
     public void UpdateBackground()
     {
-        Paint paint = _page.BackgroundBrush;
+        Paint paint = _sheet.BackgroundBrush;
         if (_frame != null && paint != null)
         {
             _frame.BackgroundTintList = ColorStateList.ValueOf(paint.ToColor().ToPlatform());
@@ -102,21 +101,23 @@ public class BottomSheetController : IBottomSheetController
     {
         SetupCoordinatorLayout();
 
-        var layout = BottomSheetManager.CreateLayout(_page, _windowMauiContext);
-        
+        var layout = BottomSheetManager.CreateLayout(_sheet, _windowMauiContext);
+
+        layout.LayoutChange += (s, e) => Layout();
+
         _frame.AddView(layout);
 
-        var callback = new BottomSheetPageCallback(_page);
+        var callback = new BottomSheetCallback(_sheet);
         callback.StateChanged += Callback_StateChanged;
         Behavior.AddBottomSheetCallback(callback);
-        _page.Dispatcher.Dispatch(() =>
+        _sheet.Dispatcher.Dispatch(() =>
         {
             UpdateBackground();
             Layout();
 
             Behavior.State = Behavior.SkipCollapsed ? BottomSheetBehavior.StateExpanded : BottomSheetBehavior.StateCollapsed;
 
-            _behavior.Hideable = _page.Cancelable;
+            _behavior.Hideable = _sheet.Cancelable;
         });
     }
 
@@ -124,6 +125,7 @@ public class BottomSheetController : IBottomSheetController
     {
         if (Behavior.State == BottomSheetBehavior.StateHidden)
         {
+            _sheet.NotifyDismissed();
             Dispose();
         }
     }

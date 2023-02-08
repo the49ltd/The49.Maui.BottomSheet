@@ -7,11 +7,11 @@ public partial class AnchorDetent: Detent
     double _height = 0;
     [AutoBindable]
     readonly VisualElement anchor;
-    public override double GetHeight(BottomSheetPage page, double maxSheetHeight)
+    public override double GetHeight(BottomSheet page, double maxSheetHeight)
     {
         UpdateHeight(page, maxSheetHeight);
         return _height;
     }
 
-    partial void UpdateHeight(BottomSheetPage page, double maxSheetHeight);
+    partial void UpdateHeight(BottomSheet page, double maxSheetHeight);
 }

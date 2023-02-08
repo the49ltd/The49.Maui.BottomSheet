@@ -6,5 +6,5 @@ public abstract partial class Detent : BindableObject
 {
     [AutoBindable(DefaultValue = "true")]
     readonly bool isEnabled = true;
-    public abstract double GetHeight(BottomSheetPage page, double maxSheetHeight);
+    public abstract double GetHeight(BottomSheet page, double maxSheetHeight);
 }

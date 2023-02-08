@@ -23,7 +23,7 @@
             </Setter>
         </Style>
     </ContentPage.Resources>
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto, *" the49:Insets.CancelIOSPadding="True">
         <the49:TopInsetView BackgroundColor="{StaticResource Primary}" x:Name="Header">
             <ContentView HeightRequest="128" Padding="16, 0, 0, 8">
                 <Label

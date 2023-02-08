@@ -7,10 +7,10 @@ namespace The49.Maui.BottomSheet;
 
 internal class BottomSheetPageContainer : UIView
 {
-    BottomSheetPage _page;
+    BottomSheet _page;
     UIView _view;
 
-    internal BottomSheetPageContainer(BottomSheetPage page, UIView view)
+    internal BottomSheetPageContainer(BottomSheet page, UIView view)
     {
         _page = page;
         _view = view;
@@ -26,32 +26,46 @@ internal class BottomSheetPageContainer : UIView
 public class BottomSheetPageViewController : UIViewController
 {
     IMauiContext _windowMauiContext;
-    BottomSheetPage _page;
+    BottomSheet _sheet;
 
-    public BottomSheetPageViewController(IMauiContext windowMauiContext, BottomSheetPage page) : base()
+    public BottomSheetPageViewController(IMauiContext windowMauiContext, BottomSheet page) : base()
     {
         _windowMauiContext = windowMauiContext;
-        _page = page;
+        _sheet = page;
     }
 
     public override void ViewDidLoad()
     {
         base.ViewDidLoad();
 
-        var container = _page.ToPlatform(_windowMauiContext);
+        var container = _sheet.ToPlatform(_windowMauiContext);
 
-        var cv = new BottomSheetPageContainer(_page, container);
+        var cv = new BottomSheetPageContainer(_sheet, container);
 
         View = cv;
-        if (_page.BackgroundBrush != null)
+        if (_sheet.BackgroundBrush != null)
         {
-            Paint paint = _page.BackgroundBrush;
+            Paint paint = _sheet.BackgroundBrush;
             View.BackgroundColor = paint.ToColor().ToPlatform();
         }
         else
         {
             View.BackgroundColor = UIColor.SystemBackground;
         }
+    }
+
+    public override void ViewWillDisappear(bool animated)
+    {
+        base.ViewWillDisappear(animated);
+        if (IsBeingDismissed)
+        {
+            _sheet.NotifyDismissed();
+        }
+    }
+    public override void ViewDidLayoutSubviews()
+    {
+        base.ViewDidLayoutSubviews();
+        SheetPresentationController.InvalidateDetents();
     }
 }
 

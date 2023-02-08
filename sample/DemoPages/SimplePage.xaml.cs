@@ -5,20 +5,20 @@ namespace The49.Maui.BottomSheet.DemoPages;
 
 public class ListAction
 {
-	public string Title { get; set; }
-	public ICommand Command { get; set; }
+    public string Title { get; set; }
+    public ICommand Command { get; set; }
 }
 
-public partial class SimplePage : BottomSheetPage
+public partial class SimplePage : BottomSheet
 {
-	public ObservableCollection<ListAction> Actions => new()
-	{
-		new ListAction
-		{
-			Title = "Share",
-			Command = new Command(() => { }),
-		},
-		new ListAction
+    public ObservableCollection<ListAction> Actions => new()
+    {
+        new ListAction
+        {
+            Title = "Share",
+            Command = new Command(() => { }),
+        },
+        new ListAction
         {
             Title = "Copy",
             Command = new Command(() => { }),
@@ -28,16 +28,26 @@ public partial class SimplePage : BottomSheetPage
             Title = "Open in browser",
             Command = new Command(() => { }),
         },
+         new ListAction
+        {
+            Title = "Resize",
+            Command = new Command(Resize),
+        },
         new ListAction
         {
             Title = "Dismiss",
-            Command = new Command(Dismiss),
+            Command = new Command(() => Dismiss()),
         }
     };
-	public SimplePage()
-	{
-		InitializeComponent();
-	}
+    public SimplePage()
+    {
+        InitializeComponent();
+    }
+
+    void Resize()
+    {
+        divider.HeightRequest = 32;
+    }
 
     public VisualElement Divider => divider;
 }

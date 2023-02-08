@@ -8,7 +8,7 @@ namespace The49.Maui.BottomSheet;
 
 internal partial class BottomSheetManager
 {
-    static partial void PlatformShow(Microsoft.Maui.Controls.Window window, BottomSheetPage page)
+    static partial void PlatformShow(Microsoft.Maui.Controls.Window window, BottomSheet page)
     {
         page.Parent = window;
         IBottomSheetController controller;
@@ -24,7 +24,7 @@ internal partial class BottomSheetManager
         controller.Show();
     }
 
-    internal static ViewGroup CreateLayout(BottomSheetPage page, IMauiContext mauiContext)
+    internal static ViewGroup CreateLayout(BottomSheet page, IMauiContext mauiContext)
     {
         var containerView = page.ToContainerView(mauiContext);
 
@@ -42,7 +42,7 @@ internal partial class BottomSheetManager
         return layout;
     }
 
-    internal static void LayoutDetents(BottomSheetBehavior behavior, ViewGroup container, BottomSheetPage page, double maxSheetHeight)
+    internal static void LayoutDetents(BottomSheetBehavior behavior, ViewGroup container, BottomSheet page, double maxSheetHeight)
     {
         // Android supports the following detents:
         // - expanded (top of screen - offset)
