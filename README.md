@@ -83,6 +83,17 @@ page.Dismiss();
 
 ```
 
+On Android, make sure your application's theme extends the Material3 theme. This mean you need a `Platforms/Android/Resources/values/styles.xml` file with the following content:
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+	<style name="Maui.MainTheme" parent="Theme.Material3.DayNight"></style>
+</resources>
+```
+
+If you already have this file, just make sure the `Maui.MainTheme` style inherits the `Theme.Material3.DayNight` parent.
+
 ## API
 
 This library offers a `BottomSheetPage`, an extension of the `ContentPage` with extra functionality
