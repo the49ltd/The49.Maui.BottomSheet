@@ -26,8 +26,8 @@ public static class MauiProgram
 		
 		// Initialise the plugin
 		builder
-            .UseMauiApp<App>()
-            .UseBottomSheet();
+                    .UseMauiApp<App>()
+                    .UseBottomSheet();
 
 		// the rest of your logic...
 	}
@@ -60,13 +60,13 @@ public class MySheetPage : BottomSheetPage
 
 
 ```xml
-<the49:BottomSheetPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<the49:BottomSheet xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:the49="https://schemas.the49.com/dotnet/2023/maui"
              x:Class="MyApp.MySheetPage"
              Title="MySheetPage">
             <!-- ... -->
-</the49:BottomSheetPage>
+</the49:BottomSheet>
 ```
 
 The sheet can be opened by calling the `Show(Window)` method of the page. It can be closed using `Dismiss()`:
@@ -95,7 +95,7 @@ Name          |  Type | Default value | Description | Android | iOS |
 :-------------------------|:-------------------------|---|:----|---|---|
 IsModal | `bool` | `false` | Displays the sheet as modal. This has no effect on whether or not the sheet can be dismissed using gestures. | ✅ | ❌* |
 ShowHandle | `bool` | `false` | If true, display a drag handle at the top of the sheet | ✅ | ✅ |
-Cancelable | `bool` | `true` | If true, prevents the dismissal of the sheet with user gestures | ✅ | ✅ |
+Cancelable | `bool` | `true` | If `false`, prevents the dismissal of the sheet with user gestures | ✅ | ✅ |
 Detents | `DetentsCollection` | `new DetentsCollection() { new ContentDetent() })` | A collection of detents where the sheet will snap to when dragged. (See the Detents section for more info) | ✅ | ✅ |
 
 \* iOS doesn't support the property `largestUndimmedDetentIdentifier` for custom detents as of right now. [See iOS documentation](https://developer.apple.com/documentation/uikit/uisheetpresentationcontroller/3858107-largestundimmeddetentidentifier)
