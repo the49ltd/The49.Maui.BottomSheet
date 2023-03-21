@@ -94,7 +94,7 @@ The following properties are available to use:
 Name          |  Type | Default value | Description | Android | iOS |
 :-------------------------|:-------------------------|---|:----|---|---|
 IsModal | `bool` | `false` | Displays the sheet as modal. This has no effect on whether or not the sheet can be dismissed using gestures. | ✅ | ❌* |
-ShowHandle | `bool` | `false` | If true, display a drag handle at the top of the sheet | ✅ | ✅ |
+ShowHandle | `bool` | `false` | If `true`, display a drag handle at the top of the sheet | ✅ | ✅ |
 Cancelable | `bool` | `true` | If `false`, prevents the dismissal of the sheet with user gestures | ✅ | ✅ |
 Detents | `DetentsCollection` | `new DetentsCollection() { new ContentDetent() })` | A collection of detents where the sheet will snap to when dragged. (See the Detents section for more info) | ✅ | ✅ |
 
