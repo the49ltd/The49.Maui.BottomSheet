@@ -26,6 +26,10 @@ internal partial class BottomSheetManager
 
     internal static ViewGroup CreateLayout(BottomSheet page, IMauiContext mauiContext)
     {
+        // The Android view for the page could already have a ContainerView as a parent if it was shown as a bottom sheet before
+        if (((AView)page.Handler?.PlatformView)?.Parent is ContainerView cv) {
+            cv.RemoveAllViews();
+        }
         var containerView = page.ToContainerView(mauiContext);
 
         var r = page.Measure(page.Window.Width, page.Window.Height);
