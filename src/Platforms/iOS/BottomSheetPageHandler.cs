@@ -9,6 +9,7 @@ public partial class BottomSheetHandler
 
     partial void Dismiss(BottomSheet view, object request)
     {
+        view.CachedDetents.Clear();
         view.Controller?.DismissViewController(true, view.NotifyDismissed);
     }
 

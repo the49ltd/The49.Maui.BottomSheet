@@ -18,12 +18,13 @@ public enum DismissOrigin
 public partial class BottomSheet : ContentView
 {
     public static readonly BindableProperty DetentsProperty = BindableProperty.Create(nameof(Detents), typeof(DetentsCollection), typeof(BottomSheet), new DetentsCollection() { new ContentDetent() });
-    public static readonly BindableProperty IsModalProperty = BindableProperty.Create(nameof(IsModal), typeof(bool), typeof(BottomSheet), false);
-    public static readonly BindableProperty ShowHandleProperty = BindableProperty.Create(nameof(ShowHandle), typeof(bool), typeof(BottomSheet), false);
-    public static readonly BindableProperty CancelableProperty = BindableProperty.Create(nameof(Cancelable), typeof(bool), typeof(BottomSheet), true);
+    public static readonly BindableProperty HasBackdropProperty = BindableProperty.Create(nameof(HasBackdrop), typeof(bool), typeof(BottomSheet), false);
+    public static readonly BindableProperty HasHandleProperty = BindableProperty.Create(nameof(HasHandle), typeof(bool), typeof(BottomSheet), false);
+    public static readonly BindableProperty IsCancelableProperty = BindableProperty.Create(nameof(IsCancelable), typeof(bool), typeof(BottomSheet), true);
 
     //public event EventHandler<float> Sliding;
     public event EventHandler<DismissOrigin> Dismissed;
+    public event EventHandler Showing;
 
     DismissOrigin _dismissOrigin = DismissOrigin.Gesture;
 
@@ -33,22 +34,22 @@ public partial class BottomSheet : ContentView
         set => SetValue(DetentsProperty, value);
     }
 
-    public bool IsModal
+    public bool HasBackdrop
     {
-        get => (bool)GetValue(IsModalProperty);
-        set => SetValue(IsModalProperty, value);
+        get => (bool)GetValue(HasBackdropProperty);
+        set => SetValue(HasBackdropProperty, value);
     }
 
-    public bool ShowHandle
+    public bool HasHandle
     {
-        get => (bool)GetValue(ShowHandleProperty);
-        set => SetValue(ShowHandleProperty, value);
+        get => (bool)GetValue(HasHandleProperty);
+        set => SetValue(HasHandleProperty, value);
     }
 
-    public bool Cancelable
+    public bool IsCancelable
     {
-        get => (bool)GetValue(CancelableProperty);
-        set => SetValue(CancelableProperty, value);
+        get => (bool)GetValue(IsCancelableProperty);
+        set => SetValue(IsCancelableProperty, value);
     }
 
     internal static BottomSheetState GetDefaultOpeningState(bool isPeekable, bool isFullScreen)
@@ -71,11 +72,9 @@ public partial class BottomSheet : ContentView
 
     public override SizeRequest Measure(double widthConstraint, double heightConstraint, MeasureFlags flags = MeasureFlags.None)
     {
-        var r = Content.Measure(widthConstraint, heightConstraint, flags);
-
         return new SizeRequest(
-            new Size(r.Request.Width + Padding.HorizontalThickness, r.Request.Height + Padding.VerticalThickness),
-            new Size(r.Minimum.Width + Padding.HorizontalThickness, r.Minimum.Height + Padding.VerticalThickness)
+            new Size(widthConstraint, heightConstraint),
+            new Size(widthConstraint, heightConstraint)
         );
     }
 
@@ -122,5 +121,10 @@ public partial class BottomSheet : ContentView
             }
             return null;
         }
+    }
+
+    internal void NotifyShowing()
+    {
+        Showing?.Invoke(this, EventArgs.Empty);
     }
 }

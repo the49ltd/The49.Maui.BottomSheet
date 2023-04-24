@@ -5,37 +5,38 @@
              x:Class="The49.Maui.BottomSheet.DemoPages.SimplePage"
              x:Name="this"
              Padding="16, 32">
-    <the49:BottomSheet.Resources>
-        <Style TargetType="Button">
-            <Setter Property="BackgroundColor" Value="Transparent" />
-            <Setter Property="TextColor" Value="Black" />
-            <Setter Property="HorizontalOptions" Value="StartAndExpand" />
-        </Style>
-    </the49:BottomSheet.Resources>
-    <!--<the49:BottomSheetPage.Detents>
-        <the49:FullscreenDetent />
-        <the49:ContentDetent />
-        <the49:AnchorDetent Anchor="{x:Reference divider}" />
-    </the49:BottomSheetPage.Detents>-->
-    <VerticalStackLayout Spacing="16">
-        <HorizontalStackLayout Spacing="16" Padding="16, 0">
-            <Border StrokeShape="RoundRectangle 8" StrokeThickness="0">
-                <Image Clip="RoundRectangle 14" Source="spicy.jpg" HeightRequest="80" WidthRequest="80" />
-            </Border>
-            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="FillAndExpand">
-                <Label Text="Hot and spicy" />
-                <Label Text="Drink up!" FontSize="10" />
-            </VerticalStackLayout>
-        </HorizontalStackLayout>
-        <BoxView Style="{StaticResource Divider}" x:Name="divider" />
-        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Actions, Source={x:Reference this}}">
-            <BindableLayout.ItemTemplate>
-                <DataTemplate>
-                    <Button Text="{Binding Title}" Padding="16, 8" Command="{Binding Command}" />
-                </DataTemplate>
-            </BindableLayout.ItemTemplate>
-        </VerticalStackLayout>
-    </VerticalStackLayout>
+	<the49:BottomSheet.Resources>
+		<Style TargetType="Button">
+			<Setter Property="BackgroundColor" Value="Transparent" />
+			<Setter Property="TextColor" Value="Black" />
+			<Setter Property="HorizontalOptions" Value="StartAndExpand" />
+		</Style>
+	</the49:BottomSheet.Resources>
+	<!--<the49:BottomSheet.Detents>
+		<the49:DetentsCollection>
+			<the49:FullscreenDetent />
+			<the49:ContentDetent />
+		</the49:DetentsCollection>
+	</the49:BottomSheet.Detents>-->
+	<VerticalStackLayout Spacing="16">
+		<HorizontalStackLayout Spacing="16" Padding="16, 0">
+			<Border StrokeShape="RoundRectangle 8" StrokeThickness="0">
+				<Image Clip="RoundRectangle 14" Source="spicy.jpg" HeightRequest="80" WidthRequest="80" />
+			</Border>
+			<VerticalStackLayout VerticalOptions="Center" HorizontalOptions="FillAndExpand">
+				<Label Text="Hot and spicy" />
+				<Label Text="Drink up!" FontSize="10" />
+			</VerticalStackLayout>
+		</HorizontalStackLayout>
+		<BoxView Style="{StaticResource Divider}" x:Name="divider" />
+		<VerticalStackLayout BindableLayout.ItemsSource="{Binding Actions, Source={x:Reference this}}">
+			<BindableLayout.ItemTemplate>
+				<DataTemplate>
+					<Button Text="{Binding Title}" Padding="16, 8" Command="{Binding Command}" />
+				</DataTemplate>
+			</BindableLayout.ItemTemplate>
+		</VerticalStackLayout>
+	</VerticalStackLayout>
 </the49:BottomSheet>
 <!-- Photo by <a href="https://unsplash.com/@medion4you?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Norbert Braun
 </a> on

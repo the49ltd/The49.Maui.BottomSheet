@@ -10,7 +10,7 @@ internal partial class BottomSheetManager
         page.Controller = controller;
 
 #if IOS15_0_OR_GREATER
-        controller.SheetPresentationController.PrefersGrabberVisible = page.ShowHandle;
+        controller.SheetPresentationController.PrefersGrabberVisible = page.HasHandle;
 #endif
 
         var pageDetents = page.GetEnabledDetents();
@@ -21,7 +21,11 @@ internal partial class BottomSheetManager
             {
                 return UISheetPresentationControllerDetent.Create($"detent{index}", (context) =>
                 {
-                    return (float)d.GetHeight(page, context.MaximumDetentValue);
+                    if (!page.CachedDetents.ContainsKey(index))
+                    {
+                        page.CachedDetents.Add(index, (float)d.GetHeight(page, context.MaximumDetentValue));
+                    }
+                    return page.CachedDetents[index];
                 });
             }).ToArray();
 #elif IOS15_0_OR_GREATER
@@ -46,7 +50,7 @@ internal partial class BottomSheetManager
         controller.SheetPresentationController.Detents = detents;
 #endif
 #if IOS13_0_OR_GREATER
-        controller.ModalInPresentation = !page.Cancelable;
+        controller.ModalInPresentation = !page.IsCancelable;
 #endif
         var parent = Platform.GetCurrentUIViewController();
 

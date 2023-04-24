@@ -117,7 +117,9 @@ public class BottomSheetController : IBottomSheetController
 
             Behavior.State = Behavior.SkipCollapsed ? BottomSheetBehavior.StateExpanded : BottomSheetBehavior.StateCollapsed;
 
-            _behavior.Hideable = _sheet.Cancelable;
+            _behavior.Hideable = _sheet.IsCancelable;
+
+            _sheet.NotifyShowing();
         });
     }
 

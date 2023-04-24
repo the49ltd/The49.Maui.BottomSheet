@@ -48,8 +48,8 @@ public class BottomSheetModalController : BottomSheetDialogFragment, IBottomShee
 
        _behavior = d.Behavior;
 
-        Cancelable = _sheet.Cancelable;
-        d.Behavior.Hideable = _sheet.Cancelable;
+        Cancelable = _sheet.IsCancelable;
+        d.Behavior.Hideable = _sheet.IsCancelable;
         var callback = new BottomSheetCallback(_sheet);
         d.Behavior.AddBottomSheetCallback(callback);
 
@@ -58,6 +58,7 @@ public class BottomSheetModalController : BottomSheetDialogFragment, IBottomShee
             UpdateBackground();
             Layout();
             Behavior.State = Behavior.SkipCollapsed ? BottomSheetBehavior.StateExpanded : BottomSheetBehavior.StateCollapsed;
+            _sheet.NotifyShowing();
         };
 
         return dialog;

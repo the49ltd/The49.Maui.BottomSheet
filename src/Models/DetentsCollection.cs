@@ -1,6 +1,5 @@
-﻿using System.Collections.ObjectModel;
-namespace The49.Maui.BottomSheet;
+﻿namespace The49.Maui.BottomSheet;
 
-public class DetentsCollection: ObservableCollection<Detent>
+public class DetentsCollection: List<Detent>
 {
 }

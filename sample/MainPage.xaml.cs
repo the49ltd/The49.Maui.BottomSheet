@@ -79,6 +79,21 @@ public partial class MainPage : ContentPage
             Description = "listen to the dismissed event",
             Command = new Command(OpenDismissed),
         },
+#if ANDROID
+        new DemoEntry
+        {
+            Title = "Customize behavior",
+            Description = "access the Android BottomSheetBehavior",
+            Command = new Command(OpenCustomizeBehavior),
+        },
+#elif IOS
+        new DemoEntry
+        {
+            Title = "Customize behavior",
+            Description = "access the iOS UISheetPresentationControllerDelegate",
+            Command = new Command(OpenCustomizeBehavior),
+        },
+#endif
     };
 
     private void OpenSimpleSheet()
@@ -89,21 +104,21 @@ public partial class MainPage : ContentPage
     private void OpenModalSheet()
     {
         var page = new SimplePage();
-        page.IsModal = true;
+        page.HasBackdrop = true;
         page.Show(Window);
     }
     private void OpenNotCancelableSheet()
     {
         var page = new SimplePage();
-        page.Cancelable = false;
-        page.IsModal = true;
+        page.IsCancelable = false;
+        page.HasBackdrop = true;
         page.Show(Window);
     }
     private void OpenHandleSheet()
     {
         var page = new SimplePage();
-        page.IsModal = true;
-        page.ShowHandle = true;
+        page.HasBackdrop = true;
+        page.HasHandle = true;
         page.Detents = new DetentsCollection()
         {
             new FullscreenDetent(),
@@ -126,7 +141,7 @@ public partial class MainPage : ContentPage
     private void OpenFullscreenSheet()
     {
         var page = new SimplePage();
-        page.IsModal = true;
+        page.HasBackdrop = true;
         page.Detents = new DetentsCollection()
         {
             new FullscreenDetent(),
@@ -168,13 +183,37 @@ public partial class MainPage : ContentPage
     void OpenDismissed()
     {
         var page = new SimplePage();
-        page.IsModal = true;
+        page.HasBackdrop = true;
         page.Dismissed += (s, e) =>
         {
             DisplayAlert("Sheet was dismissed", e == DismissOrigin.Gesture ? "Sheet was dismissed by a user gesture" : "Sheet was dismissed programmatically", "close");
         };
         page.Show(Window);
     }
+
+#if ANDROID
+    void OpenCustomizeBehavior()
+    {
+        var page = new SimplePage();
+        page.HasBackdrop = true;
+        page.Showing += (s, e) =>
+        {
+            page.Controller.Behavior.DisableShapeAnimations();
+        };
+        page.Show(Window);
+    }
+#elif IOS
+    void OpenCustomizeBehavior()
+    {
+        var page = new SimplePage();
+        page.HasBackdrop = true;
+        page.Showing += (s, e) =>
+        {
+            page.Controller.SheetPresentationController.PreferredCornerRadius = 2;
+        };
+        page.Show(Window);
+    }
+#endif
 
     private void list_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {

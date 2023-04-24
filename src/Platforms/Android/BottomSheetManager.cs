@@ -12,7 +12,7 @@ internal partial class BottomSheetManager
     {
         page.Parent = window;
         IBottomSheetController controller;
-        if (page.IsModal)
+        if (page.HasBackdrop)
         {
             controller = new BottomSheetModalController(window.Handler.MauiContext, page);
         }
@@ -36,7 +36,7 @@ internal partial class BottomSheetManager
 
         containerView.LayoutParameters = new(ViewGroup.LayoutParams.MatchParent, (int)Math.Round(r.Request.Height * DeviceDisplay.MainDisplayInfo.Density));
         var layout = new FrameLayout(mauiContext.Context);
-        if (page.ShowHandle)
+        if (page.HasHandle)
         {
             var handle = new BottomSheetDragHandleView(mauiContext.Context);
             layout.AddView(handle, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent));
@@ -107,7 +107,7 @@ internal partial class BottomSheetManager
             // Set the bottom detent using the peekHeight
             behavior.PeekHeight = (int)(bottom * DeviceDisplay.MainDisplayInfo.Density);
         }
-        
+
         container.RequestLayout();
     }
     internal static Point GetLocationOnScreen(AView view)

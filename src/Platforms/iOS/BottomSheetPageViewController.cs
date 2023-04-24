@@ -1,5 +1,6 @@
 ﻿using System;
 using CoreGraphics;
+using Microsoft.Maui.Controls;
 using Microsoft.Maui.Platform;
 using UIKit;
 
@@ -33,6 +34,7 @@ internal class SheetControllerDelegate: UISheetPresentationControllerDelegate
     }
     public override void DidDismiss(UIPresentationController presentationController)
     {
+        _sheet.CachedDetents.Clear();
         _sheet.NotifyDismissed();
     }
 }
@@ -67,6 +69,7 @@ public class BottomSheetPageViewController : UIViewController
         {
             View.BackgroundColor = UIColor.SystemBackground;
         }
+        _sheet.NotifyShowing();
     }
     public override void ViewDidLayoutSubviews()
     {

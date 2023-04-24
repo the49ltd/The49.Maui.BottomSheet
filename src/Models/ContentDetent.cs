@@ -4,13 +4,8 @@ public partial class ContentDetent : Detent
 {
     public override double GetHeight(BottomSheet page, double maxSheetHeight)
     {
-        if (page.Height == -1)
-        {
-            var r = page.Measure(page.Window.Width, maxSheetHeight);
+        var r = page.Content.Measure(page.Window.Width, maxSheetHeight);
 
-            return r.Request.Height;
-        }
-
-        return page.Height;
+        return r.Request.Height + page.Padding.VerticalThickness;
     }
 }
