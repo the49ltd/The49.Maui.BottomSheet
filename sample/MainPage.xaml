@@ -33,7 +33,7 @@
                     VerticalOptions="End" />
             </ContentView>
         </the49:TopInsetView>
-        <CollectionView Grid.Row="1" Margin="0, -72, 0, 0" Scrolled="list_Scrolled" ItemsSource="{Binding Demos, Source={x:Reference this}}" SelectionChanged="list_SelectionChanged" SelectionMode="Single" x:Name="list" Style="{StaticResource ListItem}">
+        <CollectionView Grid.Row="1" Margin="0, -72, 0, 0" Scrolled="list_Scrolled" ItemsSource="{Binding Demos, Source={x:Reference this}}" SelectionChanged="list_SelectionChanged" SelectionMode="Single" x:Name="list">
             <CollectionView.Header>
                 <ContentView HeightRequest="72" />
             </CollectionView.Header>
