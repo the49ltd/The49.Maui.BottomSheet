@@ -140,18 +140,16 @@ Example:
              x:Class="MyApp.SheetPage"
              Title="SheetPage">
     <the49:BottomSheetPage.Detents>
-        <the49:DetentsCollection>
-            <!-- Stop at the height of the screen -->
-            <the49:FullscreenDetent />
-            <!-- Stop at the height of the page content -->
-            <the49:ContentDetent />
-            <!-- Stop at 120dp -->
-            <the49:HeightDetent Height="120" />
-            <!-- Stop at 45% of the screen height -->
-            <the49:RatioDetent Height="0.45" />
-            <!-- Stop at the height of the divider view -->
-            <the49:AnchorDetent Anchor="{x:Reference divider}" />
-        </the49:DetentsCollection>
+        <!-- Stop at the height of the screen -->
+        <the49:FullscreenDetent />
+        <!-- Stop at the height of the page content -->
+        <the49:ContentDetent />
+        <!-- Stop at 120dp -->
+        <the49:HeightDetent Height="120" />
+        <!-- Stop at 45% of the screen height -->
+        <the49:RatioDetent Height="0.45" />
+        <!-- Stop at the height of the divider view -->
+        <the49:AnchorDetent Anchor="{x:Reference divider}" />
     </the49:BottomSheetPage.Detents>
     <VerticalStackLayout Spacing="16">
         <VerticalStackLayout>
@@ -265,7 +263,6 @@ If you're coming from [Gerald Versluis' video](https://www.youtube.com/watch?v=J
    - `ShowHandle` is now `HasHandle`
    - `Cancelable` is now `IsCancelable`
    - `IsModal` is now `HasBackdrop`
- - Detents in XAML must be specified within a `DetentsCollection`
 
 
 ---

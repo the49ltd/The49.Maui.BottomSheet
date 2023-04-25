@@ -56,7 +56,7 @@ internal partial class BottomSheetManager
 
         if (detents.Count == 0)
         {
-            throw new Exception("Could not show BottomSheet: There me be at least one detent specified");
+            detents = new List<Detent> { new ContentDetent() };
         }
 
         var heights = detents

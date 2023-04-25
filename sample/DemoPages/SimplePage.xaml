@@ -13,10 +13,8 @@
 		</Style>
 	</the49:BottomSheet.Resources>
 	<!--<the49:BottomSheet.Detents>
-		<the49:DetentsCollection>
-			<the49:FullscreenDetent />
-			<the49:ContentDetent />
-		</the49:DetentsCollection>
+		<the49:FullscreenDetent />
+		<the49:ContentDetent />
 	</the49:BottomSheet.Detents>-->
 	<VerticalStackLayout Spacing="16">
 		<HorizontalStackLayout Spacing="16" Padding="16, 0">

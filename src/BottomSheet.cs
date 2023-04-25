@@ -17,7 +17,11 @@ public enum DismissOrigin
 
 public partial class BottomSheet : ContentView
 {
-    public static readonly BindableProperty DetentsProperty = BindableProperty.Create(nameof(Detents), typeof(DetentsCollection), typeof(BottomSheet), new DetentsCollection() { new ContentDetent() });
+    public static readonly BindableProperty DetentsProperty = BindableProperty.Create(nameof(Detents), typeof(IList<Detent>), typeof(BottomSheet), default(IList<Detent>),
+        defaultValueCreator: bindable =>
+        {
+            return new List<Detent>();
+        });
     public static readonly BindableProperty HasBackdropProperty = BindableProperty.Create(nameof(HasBackdrop), typeof(bool), typeof(BottomSheet), false);
     public static readonly BindableProperty HasHandleProperty = BindableProperty.Create(nameof(HasHandle), typeof(bool), typeof(BottomSheet), false);
     public static readonly BindableProperty IsCancelableProperty = BindableProperty.Create(nameof(IsCancelable), typeof(bool), typeof(BottomSheet), true);
@@ -28,9 +32,9 @@ public partial class BottomSheet : ContentView
 
     DismissOrigin _dismissOrigin = DismissOrigin.Gesture;
 
-    public DetentsCollection Detents
+    public IList<Detent> Detents
     {
-        get => (DetentsCollection)GetValue(DetentsProperty);
+        get => (IList<Detent>)GetValue(DetentsProperty);
         set => SetValue(DetentsProperty, value);
     }
 
@@ -97,9 +101,9 @@ public partial class BottomSheet : ContentView
         return completionSource.Task;
     }
 
-    internal List<Detent> GetEnabledDetents()
+    internal IEnumerable<Detent> GetEnabledDetents()
     {
-        return Detents.Where(d => d.IsEnabled).ToList();
+        return Detents.Where(d => d.IsEnabled);
     }
 
     internal void NotifyDismissed()
