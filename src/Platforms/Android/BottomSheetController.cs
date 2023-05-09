@@ -128,6 +128,7 @@ public class BottomSheetController : IBottomSheetController
 
     CoordinatorLayout _coordinatorLayout;
     ViewGroup _frame;
+    ViewGroup _layout;
 
     IMauiContext _windowMauiContext { get; }
     BottomSheet _sheet { get; }
@@ -146,14 +147,15 @@ public class BottomSheetController : IBottomSheetController
 
     void Dispose()
     {
+        _layout.LayoutChange -= OnLayoutChange;
         var navigationRootManager = _windowMauiContext.Services.GetRequiredService<NavigationRootManager>();
         if (navigationRootManager.RootView is CoordinatorLayout coordinatorLayout && _coordinatorLayout == coordinatorLayout)
         {
-            //_frame.RemoveFromParent();
+            _frame.RemoveFromParent();
         }
         else
         {
-            //_coordinatorLayout.RemoveFromParent();
+            _coordinatorLayout.RemoveFromParent();
         }
         _frame = null;
         _coordinatorLayout = null;
@@ -182,7 +184,6 @@ public class BottomSheetController : IBottomSheetController
         if (navigationRootManager.RootView is ContainerView cv && cv.MainView is DrawerLayout drawerLayout)
         {
             _coordinatorLayout = new CoordinatorLayout(_windowMauiContext.Context);
-            _coordinatorLayout.SetFitsSystemWindows(true);
 
             drawerLayout.AddView(_coordinatorLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
         }
@@ -213,11 +214,11 @@ public class BottomSheetController : IBottomSheetController
     {
         SetupCoordinatorLayout();
 
-        var layout = BottomSheetManager.CreateLayout(_sheet, _windowMauiContext);
+        _layout = BottomSheetManager.CreateLayout(_sheet, _windowMauiContext);
 
-        layout.LayoutChange += (s, e) => Layout();
+        _layout.LayoutChange += OnLayoutChange;
 
-        _frame.AddView(layout);
+        _frame.AddView(_layout);
 
         var callback = new BottomSheetCallback(_sheet);
         callback.StateChanged += Callback_StateChanged;
@@ -235,7 +236,12 @@ public class BottomSheetController : IBottomSheetController
         });
     }
 
-    private void Callback_StateChanged(object sender, EventArgs e)
+    void OnLayoutChange(object sender, AView.LayoutChangeEventArgs e)
+    {
+        Layout();
+    }
+
+    void Callback_StateChanged(object sender, EventArgs e)
     {
         if (Behavior.State == BottomSheetBehavior.StateHidden)
         {
