@@ -153,7 +153,7 @@ public class BottomSheetController : IBottomSheetController
         }
         else
         {
-            //_coordinatorLayout.RemoveFromParent();
+            _coordinatorLayout.RemoveFromParent();
         }
         _frame = null;
         _coordinatorLayout = null;
