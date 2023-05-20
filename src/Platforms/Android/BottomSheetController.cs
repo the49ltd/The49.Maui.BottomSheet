@@ -206,6 +206,7 @@ public class BottomSheetController
         else
         {
             Dispose();
+            _sheet.NotifyDismissed();
         }
     }
 
