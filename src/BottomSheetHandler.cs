@@ -1,5 +1,14 @@
 ﻿using Microsoft.Maui.Handlers;
 
+#if IOS
+using PlatformView = UIKit.UIView;
+#elif ANDROID
+using PlatformView = Android.Views.View;
+#else
+using PlatformView = System.Object;
+#endif
+
+
 namespace The49.Maui.BottomSheet;
 
 public partial class BottomSheetHandler : ContentViewHandler
@@ -8,13 +17,14 @@ public partial class BottomSheetHandler : ContentViewHandler
         new PropertyMapper<BottomSheet, BottomSheetHandler>(ContentViewHandler.Mapper)
         {
             [nameof(IContentView.Background)] = MapBackground,
+            [nameof(BottomSheet.SelectedDetent)] = MapSelectedDetent,
         };
 
 
     public static new CommandMapper<BottomSheet, BottomSheetHandler> CommandMapper =
         new(ContentViewHandler.CommandMapper)
         {
-            [nameof(BottomSheet.Dismiss)] = MapDismiss,
+            [nameof(BottomSheet.DismissAsync)] = MapDismiss,
         };
 
     static void MapDismiss(BottomSheetHandler handler, BottomSheet view, object request)
@@ -22,7 +32,18 @@ public partial class BottomSheetHandler : ContentViewHandler
         handler.Dismiss(view, request);
     }
 
-    partial void UpdateState(BottomSheet view);
+    public static void MapSelectedDetent(BottomSheetHandler handler, BottomSheet view)
+    {
+        handler.PlatformMapSelectedDetent(view);
+    }
+
+    internal void UpdateSelectedDetent(BottomSheet view)
+    {
+        PlatformUpdateSelectedDetent(view);
+    }
+
+    partial void PlatformMapSelectedDetent(BottomSheet view);
+    partial void PlatformUpdateSelectedDetent(BottomSheet view);
     partial void Dismiss(BottomSheet view, object request);
 
     public BottomSheetHandler() : base(Mapper, CommandMapper)
@@ -38,5 +59,8 @@ public partial class BottomSheetHandler : ContentViewHandler
         : base(mapper ?? Mapper, commandMapper ?? CommandMapper)
     {
     }
+
+    new BottomSheet VirtualView { get; }
+    new PlatformView PlatformView { get; }
 
 }

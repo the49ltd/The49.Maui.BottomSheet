@@ -5,6 +5,7 @@
              x:Class="The49.Maui.BottomSheet.MainPage"
              x:Name="this"
              the49:Insets.EdgeToEdge="True"
+             NavigationPage.HasNavigationBar="False"
              >
     <ContentPage.Resources>
         <Style TargetType="Grid">
@@ -33,26 +34,29 @@
                     VerticalOptions="End" />
             </ContentView>
         </the49:TopInsetView>
-        <CollectionView Grid.Row="1" Margin="0, -72, 0, 0" Scrolled="list_Scrolled" ItemsSource="{Binding Demos, Source={x:Reference this}}" SelectionChanged="list_SelectionChanged" SelectionMode="Single" x:Name="list">
-            <CollectionView.Header>
-                <ContentView HeightRequest="72" />
-            </CollectionView.Header>
-            <CollectionView.Footer>
-                <the49:BottomInsetView />
-            </CollectionView.Footer>
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Grid ColumnDefinitions="Auto, *" Padding="16, 4" HeightRequest="72">
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" />
-                        </Grid.GestureRecognizers>
-                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                            <Label Text="{Binding Title}" Style="{StaticResource BodyLarge}" />
-                            <Label Text="{Binding Description}" Style="{StaticResource BodyMedium}" />
-                        </VerticalStackLayout>
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+        <RefreshView Grid.Row="1" IsEnabled="False">
+            <ListView BackgroundColor="Transparent" Scrolled="list_Scrolled" ItemsSource="{Binding Demos, Source={x:Reference this}}" SelectionMode="Single" x:Name="list" HasUnevenRows="True">
+                <ListView.FooterTemplate>
+                    <DataTemplate>
+                        <the49:BottomInsetView />
+                    </DataTemplate>
+                </ListView.FooterTemplate>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid ColumnDefinitions="Auto, *" Padding="16, 4" HeightRequest="72">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" />
+                                </Grid.GestureRecognizers>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding Title}" Style="{StaticResource BodyLarge}" />
+                                    <Label Text="{Binding Description}" Style="{StaticResource BodyMedium}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </RefreshView>
     </Grid>
 </ContentPage>

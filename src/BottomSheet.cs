@@ -1,14 +1,5 @@
 ﻿namespace The49.Maui.BottomSheet;
 
-public enum BottomSheetState
-{
-    Hidden,
-    Peeking,
-    HalfExpanded,
-    Expanded,
-    Dragging,
-}
-
 public enum DismissOrigin
 {
     Gesture,
@@ -24,11 +15,14 @@ public partial class BottomSheet : ContentView
         });
     public static readonly BindableProperty HasBackdropProperty = BindableProperty.Create(nameof(HasBackdrop), typeof(bool), typeof(BottomSheet), false);
     public static readonly BindableProperty HasHandleProperty = BindableProperty.Create(nameof(HasHandle), typeof(bool), typeof(BottomSheet), false);
+    public static readonly BindableProperty HandleColorProperty = BindableProperty.Create(nameof(HandleColor), typeof(Color), typeof(BottomSheet), null);
     public static readonly BindableProperty IsCancelableProperty = BindableProperty.Create(nameof(IsCancelable), typeof(bool), typeof(BottomSheet), true);
+    public static readonly BindableProperty SelectedDetentProperty = BindableProperty.Create(nameof(SelectedDetent), typeof(Detent), typeof(BottomSheet), null, BindingMode.TwoWay);
 
     //public event EventHandler<float> Sliding;
     public event EventHandler<DismissOrigin> Dismissed;
     public event EventHandler Showing;
+    public event EventHandler Shown;
 
     DismissOrigin _dismissOrigin = DismissOrigin.Gesture;
 
@@ -50,23 +44,22 @@ public partial class BottomSheet : ContentView
         set => SetValue(HasHandleProperty, value);
     }
 
+    public Color? HandleColor
+    {
+        get => (Color?)GetValue(HandleColorProperty);
+        set => SetValue(HandleColorProperty, value);
+    }
+
     public bool IsCancelable
     {
         get => (bool)GetValue(IsCancelableProperty);
         set => SetValue(IsCancelableProperty, value);
     }
 
-    internal static BottomSheetState GetDefaultOpeningState(bool isPeekable, bool isFullScreen)
+    public Detent SelectedDetent
     {
-        if (isPeekable)
-        {
-            return BottomSheetState.Peeking;
-        }
-        if (isFullScreen)
-        {
-            return BottomSheetState.HalfExpanded;
-        }
-        return BottomSheetState.Expanded;
+        get => (Detent)GetValue(SelectedDetentProperty);
+        set => SetValue(SelectedDetentProperty, value);
     }
 
     public BottomSheet() : base()
@@ -82,12 +75,26 @@ public partial class BottomSheet : ContentView
         );
     }
 
-    public void Show(Window window)
+    public Task ShowAsync(Window window, bool animated = true)
     {
-        BottomSheetManager.Show(window, this);
+        var completionSource = new TaskCompletionSource();
+        void OnShown(object sender, EventArgs e)
+        {
+            Shown -= OnShown;
+            completionSource.SetResult();
+        }
+        Shown += OnShown;
+
+        if (SelectedDetent is null)
+        {
+            SelectedDetent = GetDefaultDetent();
+        }
+
+        BottomSheetManager.Show(window, this, animated);
+        return completionSource.Task;
     }
 
-    public Task Dismiss()
+    public Task DismissAsync(bool animated = true)
     {
         _dismissOrigin = DismissOrigin.Programmatic;
         var completionSource = new TaskCompletionSource();
@@ -97,13 +104,24 @@ public partial class BottomSheet : ContentView
             completionSource.SetResult();
         }
         Dismissed += OnDismissed;
-        Handler?.Invoke(nameof(Dismiss));
+        Handler?.Invoke(nameof(DismissAsync), animated);
         return completionSource.Task;
     }
 
     internal IEnumerable<Detent> GetEnabledDetents()
     {
         return Detents.Where(d => d.IsEnabled);
+    }
+
+    internal Detent GetDefaultDetent()
+    {
+        var detents = GetEnabledDetents();
+        var detent = SelectedDetent;
+        if (SelectedDetent is not null)
+        {
+            return SelectedDetent;
+        }
+        return detents.FirstOrDefault(d => d.IsDefault);
     }
 
     internal void NotifyDismissed()
@@ -130,5 +148,9 @@ public partial class BottomSheet : ContentView
     internal void NotifyShowing()
     {
         Showing?.Invoke(this, EventArgs.Empty);
+    }
+    internal void NotifyShown()
+    {
+        Shown?.Invoke(this, EventArgs.Empty);
     }
 }

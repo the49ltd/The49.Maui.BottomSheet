@@ -1,6 +1,7 @@
 ﻿using The49.Maui.BottomSheet.DemoPages;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using CommunityToolkit.Maui.Alerts;
 
 namespace The49.Maui.BottomSheet;
 
@@ -45,6 +46,18 @@ public partial class MainPage : ContentPage
         },
         new DemoEntry
         {
+            Title = "With custom handle color",
+            Description = "Chose the color of the drag handle",
+            Command = new Command(OpenHandleColorSheet),
+        },
+        new DemoEntry
+        {
+            Title = "Without animation",
+            Description = "display the sheet immediately",
+            Command = new Command(OpenNoAnimationSheet),
+        },
+        new DemoEntry
+        {
             Title = "Specify a height",
             Description = "Use a dp value at which the sheet will open",
             Command = new Command(OpenHeightSheet),
@@ -79,6 +92,18 @@ public partial class MainPage : ContentPage
             Description = "listen to the dismissed event",
             Command = new Command(OpenDismissed),
         },
+        new DemoEntry
+        {
+            Title = "Selected Detent",
+            Description = "control the selected detent",
+            Command = new Command(OpenSelectedDetent),
+        },
+        new DemoEntry
+        {
+            Title = "Default detent",
+            Description = "define a detent to be opened by default",
+            Command = new Command(OpenDefaultDetent),
+        },
 #if ANDROID
         new DemoEntry
         {
@@ -99,20 +124,20 @@ public partial class MainPage : ContentPage
     private void OpenSimpleSheet()
     {
         var page = new SimplePage();
-        page.Show(Window);
+        page.ShowAsync(Window);
     }
     private void OpenModalSheet()
     {
         var page = new SimplePage();
         page.HasBackdrop = true;
-        page.Show(Window);
+        page.ShowAsync(Window);
     }
     private void OpenNotCancelableSheet()
     {
         var page = new SimplePage();
         page.IsCancelable = false;
         page.HasBackdrop = true;
-        page.Show(Window);
+        page.ShowAsync(Window);
     }
     private void OpenHandleSheet()
     {
@@ -125,7 +150,21 @@ public partial class MainPage : ContentPage
             new ContentDetent(),
             new AnchorDetent { Anchor = page.Divider },
         };
-        page.Show(Window);
+        page.ShowAsync(Window);
+    }
+    private void OpenHandleColorSheet()
+    {
+        var page = new SimplePage();
+        page.HasBackdrop = true;
+        page.HasHandle = true;
+        page.HandleColor = Colors.Salmon;
+        page.Detents = new DetentsCollection()
+        {
+            new FullscreenDetent(),
+            new ContentDetent(),
+            new AnchorDetent { Anchor = page.Divider },
+        };
+        page.ShowAsync(Window);
     }
     private void OpenPeekableSheet()
     {
@@ -136,7 +175,7 @@ public partial class MainPage : ContentPage
             new ContentDetent(),
             new AnchorDetent { Anchor = page.Divider },
         };
-        page.Show(Window);
+        page.ShowAsync(Window);
     }
     private void OpenFullscreenSheet()
     {
@@ -146,7 +185,7 @@ public partial class MainPage : ContentPage
         {
             new FullscreenDetent(),
         };
-        page.Show(Window);
+        page.ShowAsync(Window);
     }
     private void OpenBackgroundSheet()
     {
@@ -158,7 +197,7 @@ public partial class MainPage : ContentPage
             new AnchorDetent { Anchor = page.Divider },
         };
         page.Background = Colors.Salmon;
-        page.Show(Window);
+        page.ShowAsync(Window);
     }
     private void OpenRatioSheet()
     {
@@ -167,7 +206,7 @@ public partial class MainPage : ContentPage
         {
             new RatioDetent() { Ratio = .6f },
         };
-        page.Show(Window);
+        page.ShowAsync(Window);
     }
 
     private void OpenHeightSheet()
@@ -177,7 +216,7 @@ public partial class MainPage : ContentPage
         {
             new HeightDetent() { Height = 240 },
         };
-        page.Show(Window);
+        page.ShowAsync(Window);
     }
 
     void OpenDismissed()
@@ -188,7 +227,59 @@ public partial class MainPage : ContentPage
         {
             DisplayAlert("Sheet was dismissed", e == DismissOrigin.Gesture ? "Sheet was dismissed by a user gesture" : "Sheet was dismissed programmatically", "close");
         };
-        page.Show(Window);
+        page.ShowAsync(Window);
+    }
+
+    void OpenSelectedDetent()
+    {
+        var page = new SimplePage();
+        page.Detents = new DetentsCollection()
+        {
+            new FullscreenDetent(),
+            new MediumDetent(),
+            new RatioDetent { Ratio = .2f },
+        };
+        page.HasBackdrop = false;
+        page.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(page.SelectedDetent))
+            {
+                Toast.Make($"Selected Detent is now {(page.SelectedDetent is null ? "unknown" : page.SelectedDetent.ToString())}").Show();
+            }
+        };
+        page.SetExtraContent(new HorizontalStackLayout
+        {
+            new Button { Text = "small", Command = new Command(() => page.SelectedDetent = page.Detents[2]) },
+            new Button { Text = "medium", Command = new Command(() => page.SelectedDetent = page.Detents[1]) },
+            new Button { Text = "large", Command = new Command(() => page.SelectedDetent = page.Detents[0]) },
+        });
+        page.ShowAsync(Window);
+    }
+
+    void OpenDefaultDetent()
+    {
+        var page = new SimplePage();
+        page.Detents = new DetentsCollection()
+        {
+            new FullscreenDetent(),
+            new MediumDetent() { IsDefault = true },
+            new RatioDetent { Ratio = .2f },
+        };
+        page.HasBackdrop = false;
+        page.ShowAsync(Window);
+    }
+
+    void OpenNoAnimationSheet()
+    {
+        var page = new SimplePage();
+        page.Detents = new DetentsCollection()
+        {
+            new FullscreenDetent(),
+            new ContentDetent(),
+        };
+        page.HasBackdrop = true;
+        page.SetExtraContent(new Button { Text = "Dismiss without animation", Command = new Command(() => page.DismissAsync(false)) });
+        page.ShowAsync(Window, false);
     }
 
 #if ANDROID
@@ -200,7 +291,7 @@ public partial class MainPage : ContentPage
         {
             page.Controller.Behavior.DisableShapeAnimations();
         };
-        page.Show(Window);
+        page.ShowAsync(Window);
     }
 #elif IOS
     void OpenCustomizeBehavior()
@@ -211,7 +302,7 @@ public partial class MainPage : ContentPage
         {
             page.Controller.SheetPresentationController.PreferredCornerRadius = 2;
         };
-        page.Show(Window);
+        page.ShowAsync(Window);
     }
 #endif
 

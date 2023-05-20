@@ -2,7 +2,7 @@
 
 public partial class BottomSheetHandler
 {
-    public static void MapBackground(BottomSheetHandler handler, BottomSheet page)
+    public static void MapBackground(BottomSheetHandler handler, BottomSheet view)
     {
         // Leave the background empty, the parent sheet handles the color
     }
@@ -10,11 +10,16 @@ public partial class BottomSheetHandler
     partial void Dismiss(BottomSheet view, object request)
     {
         view.CachedDetents.Clear();
-        view.Controller?.DismissViewController(true, view.NotifyDismissed);
+        view.Controller?.DismissViewController((bool)request, view.NotifyDismissed);
     }
 
-    partial void UpdateState(BottomSheet view)
+    partial void PlatformMapSelectedDetent(BottomSheet view)
     {
-        // Can't do that in iOS16 as custom detents cannot be selected
+        view.Controller.UpdateSelectedIdentifierFromDetent();
+    }
+
+    partial void PlatformUpdateSelectedDetent(BottomSheet view)
+    {
+        view.Controller.UpdateSelectedDetent();
     }
 }

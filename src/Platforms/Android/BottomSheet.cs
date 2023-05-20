@@ -2,6 +2,6 @@
 
 public partial class BottomSheet
 {
-    public IBottomSheetController Controller { get; set; }
+    public BottomSheetController Controller { get; set; }
 
 }

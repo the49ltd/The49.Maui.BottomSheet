@@ -36,7 +36,7 @@ public partial class SimplePage : BottomSheet
         new ListAction
         {
             Title = "Dismiss",
-            Command = new Command(() => Dismiss()),
+            Command = new Command(() => DismissAsync()),
         }
     };
     public SimplePage()
@@ -50,4 +50,9 @@ public partial class SimplePage : BottomSheet
     }
 
     public VisualElement Divider => divider;
+
+    public void SetExtraContent(View view)
+    {
+        extra.Content = view;
+    }
 }

@@ -56,8 +56,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Maui" Version="5.1.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
-		<PackageReference Include="The49.Maui.Insets" Version="1.0.0-alpha3" />
+		<PackageReference Include="The49.Maui.Insets" Version="1.0.0-alpha4" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -66,7 +67,7 @@
 
 	<ItemGroup>
 	  <MauiXaml Update="DemoPages\SimplePage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
+	    <Generator></Generator>
 	  </MauiXaml>
 	</ItemGroup>
 

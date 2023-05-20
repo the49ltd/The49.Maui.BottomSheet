@@ -9,6 +9,16 @@ public partial class BottomSheetHandler
 
     partial void Dismiss(BottomSheet view, object request)
     {
-        view.Controller?.Dismiss();
+        view.Controller?.Dismiss((bool)request);
+    }
+
+    partial void PlatformUpdateSelectedDetent(BottomSheet view)
+    {
+        view.Controller.UpdateSelectedDetent();
+    }
+
+    partial void PlatformMapSelectedDetent(BottomSheet view)
+    {
+        view.Controller.UpdateStateFromDetent();
     }
 }

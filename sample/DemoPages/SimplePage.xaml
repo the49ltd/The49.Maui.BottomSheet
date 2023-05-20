@@ -12,10 +12,6 @@
 			<Setter Property="HorizontalOptions" Value="StartAndExpand" />
 		</Style>
 	</the49:BottomSheet.Resources>
-	<!--<the49:BottomSheet.Detents>
-		<the49:FullscreenDetent />
-		<the49:ContentDetent />
-	</the49:BottomSheet.Detents>-->
 	<VerticalStackLayout Spacing="16">
 		<HorizontalStackLayout Spacing="16" Padding="16, 0">
 			<Border StrokeShape="RoundRectangle 8" StrokeThickness="0">
@@ -27,6 +23,7 @@
 			</VerticalStackLayout>
 		</HorizontalStackLayout>
 		<BoxView Style="{StaticResource Divider}" x:Name="divider" />
+		<ContentView x:Name="extra" />
 		<VerticalStackLayout BindableLayout.ItemsSource="{Binding Actions, Source={x:Reference this}}">
 			<BindableLayout.ItemTemplate>
 				<DataTemplate>

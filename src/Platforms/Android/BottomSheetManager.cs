@@ -8,26 +8,19 @@ namespace The49.Maui.BottomSheet;
 
 internal partial class BottomSheetManager
 {
-    static partial void PlatformShow(Microsoft.Maui.Controls.Window window, BottomSheet page)
+    static partial void PlatformShow(Microsoft.Maui.Controls.Window window, BottomSheet sheet, bool animated)
     {
-        page.Parent = window;
-        IBottomSheetController controller;
-        if (page.HasBackdrop)
-        {
-            controller = new BottomSheetModalController(window.Handler.MauiContext, page);
-        }
-        else
-        {
-            controller = new BottomSheetController(window.Handler.MauiContext, page);
-        }
-        page.Controller = controller;
-        controller.Show();
+        sheet.Parent = window;
+        var controller = new BottomSheetController(window.Handler.MauiContext, sheet);
+        sheet.Controller = controller;
+        controller.Show(animated);
     }
 
     internal static ViewGroup CreateLayout(BottomSheet page, IMauiContext mauiContext)
     {
         // The Android view for the page could already have a ContainerView as a parent if it was shown as a bottom sheet before
-        if (((AView)page.Handler?.PlatformView)?.Parent is ContainerView cv) {
+        if (((AView)page.Handler?.PlatformView)?.Parent is ContainerView cv)
+        {
             cv.RemoveAllViews();
         }
         var containerView = page.ToContainerView(mauiContext);
@@ -39,6 +32,10 @@ internal partial class BottomSheetManager
         if (page.HasHandle)
         {
             var handle = new BottomSheetDragHandleView(mauiContext.Context);
+            if (page.HandleColor is not null)
+            {
+                handle.SetColorFilter(page.HandleColor.ToPlatform());
+            }
             layout.AddView(handle, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent));
         }
         layout.AddView(containerView);
@@ -46,53 +43,42 @@ internal partial class BottomSheetManager
         return layout;
     }
 
-    internal static void LayoutDetents(BottomSheetBehavior behavior, ViewGroup container, BottomSheet page, double maxSheetHeight)
+    internal static void LayoutDetents(BottomSheetBehavior behavior, ViewGroup container, IDictionary<Detent, double> heights, double maxSheetHeight)
     {
         // Android supports the following detents:
         // - expanded (top of screen - offset)
         // - half expanded (using ratio of expanded - peekHeight)
         // - collapsed (using peekHeight)
-        var detents = page.GetEnabledDetents().ToList();
 
-        if (detents.Count == 0)
-        {
-            detents = new List<Detent> { new ContentDetent() };
-        }
-
-        var heights = detents
-            .Select(d =>
-            {
-                var val = d.GetHeight(page, maxSheetHeight);
-                return val;
-            })
-            .OrderBy(d => -d)
+        var sortedHeights = heights
+            .OrderByDescending(i => i.Value)
             .ToList();
 
 
-        if (heights.Count == 1)
+        if (sortedHeights.Count == 1)
         {
             behavior.FitToContents = true;
             behavior.SkipCollapsed = true;
-            var top = heights[0];
+            var top = sortedHeights[0].Value;
             container.LayoutParameters.Height = (int)(top * DeviceDisplay.MainDisplayInfo.Density);
         }
-        else if (heights.Count == 2)
+        else if (sortedHeights.Count == 2)
         {
             behavior.FitToContents = true;
             behavior.SkipCollapsed = false;
-            var top = heights[0];
+            var top = sortedHeights[0].Value;
             container.LayoutParameters.Height = (int)(top * DeviceDisplay.MainDisplayInfo.Density);
-            var bottom = heights[1];
+            var bottom = sortedHeights[1].Value;
 
             behavior.PeekHeight = (int)(bottom * DeviceDisplay.MainDisplayInfo.Density);
         }
-        else if (heights.Count == 3)
+        else if (sortedHeights.Count == 3)
         {
             behavior.FitToContents = false;
             behavior.SkipCollapsed = false;
-            var top = heights[0];
-            var midway = heights[1];
-            var bottom = heights[2];
+            var top = sortedHeights[0].Value;
+            var midway = sortedHeights[1].Value;
+            var bottom = sortedHeights[2].Value;
 
             container.LayoutParameters.Height = (int)(top * DeviceDisplay.MainDisplayInfo.Density);
 
