@@ -132,6 +132,8 @@ Name          |  Parameter | Description |
 `RatioDetent` | `Ratio` | Use a ratio of the full screen height |
 `MediumDetent` |  | A detent at the halfway point of the screen |
 
+A `IsDefault` property can be used to select the detent that will be shown when calling `ShowAsync`. Otherwise the smallest detent is used.
+
 Example:
 
 ```xml
@@ -144,7 +146,7 @@ Example:
         <!-- Stop at the height of the screen -->
         <the49:FullscreenDetent />
         <!-- Stop at the height of the page content -->
-        <the49:ContentDetent />
+        <the49:ContentDetent IsDefault="True" />
         <!-- Stop at 120dp -->
         <the49:HeightDetent Height="120" />
         <!-- Stop at 45% of the screen height -->
@@ -225,6 +227,10 @@ Here is how you can use the detents you need on Android, and use the detents com
     </VerticalStackLayout>
 </the49:BottomSheetPage>
 ```
+
+## How can I change the detent used when showing the sheet
+
+You can either add `IsDefault="True"` to the detent or set `SelectedDetent` to one of your detents before calling `ShowAsync`.
 
 ## How do I prevent the rounded corner to animate on Android?
 
