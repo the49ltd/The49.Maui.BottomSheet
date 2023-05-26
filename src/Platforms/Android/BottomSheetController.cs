@@ -5,120 +5,15 @@ using Android.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using AndroidX.DrawerLayout.Widget;
 using Android.Content.Res;
-using Google.Android.Material.Internal;
 using AView = Android.Views.View;
-using AndroidX.Core.View;
-using Android.Graphics.Drawables;
-using Google.Android.Material.Color;
 using Exception = System.Exception;
-using Microsoft.Maui.Controls;
+using AndroidX.Core.View;
+using Android.App;
 
 namespace The49.Maui.BottomSheet;
 
 public class BottomSheetController
 {
-    internal class EdgeToEdgeCallback : BottomSheetBehavior.BottomSheetCallback
-    {
-        WindowInsetsCompat _insetsCompat;
-        private BottomSheetController _controller;
-        private bool? _lightBottomSheet;
-
-        internal EdgeToEdgeCallback(BottomSheetController controller, WindowInsetsCompat insetsCompat) : base()
-        {
-            _insetsCompat = insetsCompat;
-            _controller = controller;
-
-            var backgroundTint = ViewCompat.GetBackgroundTintList(controller._frame);
-
-            if (backgroundTint != null)
-            {
-                // First check for a tint
-                _lightBottomSheet = MaterialColors.IsColorLight(backgroundTint.DefaultColor);
-            }
-            else if (controller._frame.Background is ColorDrawable colorDrawable)
-            {
-                // Then check for the background color
-                _lightBottomSheet = MaterialColors.IsColorLight(colorDrawable.Color);
-            }
-            else
-            {
-                // Otherwise don't change the status bar color
-                _lightBottomSheet = null;
-            }
-        }
-        public override void OnSlide(AView bottomSheet, float newState)
-        {
-            SetPaddingForPosition(bottomSheet);
-        }
-
-        public override void OnStateChanged(AView bottomSheet, int p1)
-        {
-            SetPaddingForPosition(bottomSheet);
-        }
-        private void SetPaddingForPosition(AView bottomSheet)
-        {
-            var window = ((Android.App.Activity)_controller._sheet.Window.Handler.PlatformView).Window;
-
-            var insetsController =
-            WindowCompat.GetInsetsController(window, window.DecorView);
-            var lightStatusBar = insetsController.AppearanceLightStatusBars;
-
-            if (bottomSheet.Top < _insetsCompat.SystemWindowInsetTop)
-            {
-                // If the bottomsheet is light, we should set light status bar so the icons are visible
-                // since the bottomsheet is now under the status bar.
-                if (window != null)
-                {
-                    EdgeToEdgeUtils.SetLightStatusBar(
-                        window, !_lightBottomSheet.HasValue ? lightStatusBar : _lightBottomSheet.Value);
-                }
-                // Smooth transition into status bar when drawing edge to edge.
-                bottomSheet.SetPadding(
-                    bottomSheet.PaddingLeft,
-                    (_insetsCompat.SystemWindowInsetTop - bottomSheet.Top),
-                    bottomSheet.PaddingRight,
-                    bottomSheet.PaddingBottom);
-            }
-            else if (bottomSheet.Top != 0)
-            {
-                // Reset the status bar icons to the original color because the bottomsheet is not under the
-                // status bar.
-                if (window != null)
-                {
-                    EdgeToEdgeUtils.SetLightStatusBar(window, lightStatusBar);
-                }
-                bottomSheet.SetPadding(
-                    bottomSheet.PaddingLeft,
-                    0,
-                    bottomSheet.PaddingRight,
-                    bottomSheet.PaddingBottom);
-            }
-        }
-    }
-    internal class OnApplyWindowInsetsListener : Java.Lang.Object, IOnApplyWindowInsetsListener
-    {
-        private BottomSheetController _controller;
-
-        internal OnApplyWindowInsetsListener(BottomSheetController controller) : base()
-        {
-            _controller = controller;
-        }
-        public WindowInsetsCompat OnApplyWindowInsets(AView v, WindowInsetsCompat insets)
-        {
-            if (_controller._edgeToEdgeCallback != null)
-            {
-                _controller.Behavior.RemoveBottomSheetCallback(_controller._edgeToEdgeCallback);
-            }
-
-            if (insets != null)
-            {
-                _controller._edgeToEdgeCallback = new EdgeToEdgeCallback(_controller, insets);
-                _controller.Behavior.AddBottomSheetCallback(_controller._edgeToEdgeCallback);
-            }
-            return insets;
-        }
-    }
-    BottomSheetBehavior.BottomSheetCallback _edgeToEdgeCallback { get; set; }
     public IDictionary<Detent, int> _states;
     public IDictionary<Detent, double> _heights;
 
@@ -127,10 +22,10 @@ public class BottomSheetController
     BottomSheetBehavior _behavior;
     public BottomSheetBehavior Behavior => _behavior;
 
-    CoordinatorLayout _coordinatorLayout;
     ViewGroup _frame;
     ViewGroup _layout;
     BottomSheetBackdrop _backdrop;
+    FrameLayout _container;
 
     IMauiContext _windowMauiContext { get; }
     BottomSheet _sheet { get; }
@@ -213,18 +108,12 @@ public class BottomSheetController
     void Dispose()
     {
         _layout.LayoutChange -= OnLayoutChange;
-        var navigationRootManager = _windowMauiContext.Services.GetRequiredService<NavigationRootManager>();
-        if (navigationRootManager.RootView is CoordinatorLayout coordinatorLayout && _coordinatorLayout == coordinatorLayout)
-        {
-            _frame.RemoveFromParent();
-        }
-        else
-        {
-            _coordinatorLayout.RemoveFromParent();
-        }
+
+        _container.RemoveFromParent();
+        _backdrop?.RemoveFromParent();
+
         _frame = null;
-        _coordinatorLayout = null;
-        _backdrop.RemoveFromParent();
+        _container = null;
         _backdrop = null;
     }
 
@@ -244,45 +133,57 @@ public class BottomSheetController
         }
     }
 
-    void SetupCoordinatorLayout()
+    ViewGroup FindNavigationRootView()
     {
-
-        var container =
-            (FrameLayout)AView.Inflate(_windowMauiContext.Context, Resource.Layout.the49_maui_bottom_sheet_design, null);
-
-        var coordinator = (CoordinatorLayout)container.FindViewById(Resource.Id.coordinator);
-        _frame = (FrameLayout)container.FindViewById(Resource.Id.design_bottom_sheet);
-
-        _behavior = BottomSheetBehavior.From(_frame);
-
         var navigationRootManager = _windowMauiContext.Services.GetRequiredService<NavigationRootManager>();
 
         if (navigationRootManager.RootView is ContainerView cv && cv.MainView is DrawerLayout drawerLayout)
         {
-            _coordinatorLayout = new CoordinatorLayout(_windowMauiContext.Context);
+            return drawerLayout;
+        }
+        if (navigationRootManager.RootView is CoordinatorLayout coordinatorLayout)
+        {
+            return coordinatorLayout;
+        }
 
-            drawerLayout.AddView(_coordinatorLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
-        }
-        else if (navigationRootManager.RootView is CoordinatorLayout coordinatorLayout)
-        {
-            _coordinatorLayout = coordinatorLayout;
-        }
-        else
-        {
-            throw new Exception("Unrecognized RootView");
-        }
+        throw new Exception("Unrecognized RootView");
+
+    }
+
+    void SetupCoordinatorLayout()
+    {
+        _container =
+            (FrameLayout)AView.Inflate(_windowMauiContext.Context, Resource.Layout.the49_maui_bottom_sheet_design, null);
+
+        _container.ViewAttachedToWindow += ContainerAttachedToWindow;
+        _container.ViewDetachedFromWindow += ContainerDetachedFromWindow;
+
+        _frame = (FrameLayout)_container.FindViewById(Resource.Id.design_bottom_sheet);
+
+        _behavior = BottomSheetBehavior.From(_frame);
+
+        var rootView = FindNavigationRootView();
 
         if (_sheet.HasBackdrop)
         {
             _backdrop = new BottomSheetBackdrop(_windowMauiContext.Context);
             _backdrop.Click += BackdropClicked;
 
-            _coordinatorLayout.AddView(_backdrop, new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
+            rootView.AddView(_backdrop, new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
         }
 
-        _coordinatorLayout.AddView(container, new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
+        rootView.AddView(_container, new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
+    }
 
-        ViewCompat.SetOnApplyWindowInsetsListener(_frame, new OnApplyWindowInsetsListener(this));
+    void ContainerDetachedFromWindow(object sender, AView.ViewDetachedFromWindowEventArgs e)
+    {
+        
+    }
+
+    void ContainerAttachedToWindow(object sender, AView.ViewAttachedToWindowEventArgs e)
+    {
+        var window = ((Activity)_sheet.Window.Handler.PlatformView).Window;
+        WindowCompat.SetDecorFitsSystemWindows(window, false);
     }
 
     private void BackdropClicked(object sender, EventArgs e)
@@ -370,7 +271,7 @@ public class BottomSheetController
 
     internal void UpdateStateFromDetent()
     {
-        if (_sheet.SelectedDetent is null || Behavior is null)
+        if (_sheet.SelectedDetent is null || Behavior is null || _states is null)
         {
             return;
         }
