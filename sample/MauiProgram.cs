@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using The49.Maui.Insets;
 
-namespace The49.Maui.BottomSheet;
+namespace The49.Maui.BottomSheet.Sample;
 
 public static class MauiProgram
 {

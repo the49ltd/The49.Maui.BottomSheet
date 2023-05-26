@@ -1,4 +1,5 @@
 ﻿using System;
+using CoreGraphics;
 using UIKit;
 
 namespace The49.Maui.BottomSheet;
@@ -7,9 +8,8 @@ public partial class AnchorDetent
 {
     partial void UpdateHeight(BottomSheet page, double maxSheetHeight)
     {
-        var r = page.Measure(page.Window.Width, maxSheetHeight);
-        page.Arrange(new Rect(new Point(0, 0), r.Request));
         var pageView = (UIView)page.Handler.PlatformView;
+        pageView.Frame = new CGRect(new CGPoint(0, 0), new CGSize(page.Window.Width, maxSheetHeight));
         var targetView = (UIView)Anchor.Handler.PlatformView;
 
         pageView.SetNeedsLayout();

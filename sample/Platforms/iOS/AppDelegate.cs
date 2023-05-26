@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace The49.Maui.BottomSheet;
+namespace The49.Maui.BottomSheet.Sample;
 
 [Register("AppDelegate")]
 public class AppDelegate : MauiUIApplicationDelegate

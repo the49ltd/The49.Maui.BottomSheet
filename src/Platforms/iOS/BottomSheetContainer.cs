@@ -3,12 +3,12 @@ using UIKit;
 
 namespace The49.Maui.BottomSheet;
 
-internal class BottomSheetPageContainer : UIView
+internal class BottomSheetContainer : UIView
 {
     BottomSheet _page;
     UIView _view;
 
-    internal BottomSheetPageContainer(BottomSheet page, UIView view)
+    internal BottomSheetContainer(BottomSheet page, UIView view)
     {
         _page = page;
         _view = view;

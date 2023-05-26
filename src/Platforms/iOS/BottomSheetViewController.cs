@@ -25,7 +25,7 @@ public class BottomSheetViewController : UIViewController
 
         var container = _sheet.ToPlatform(_windowMauiContext);
 
-        var cv = new BottomSheetPageContainer(_sheet, container);
+        var cv = new BottomSheetContainer(_sheet, container);
 
         View.AddSubview(cv);
 

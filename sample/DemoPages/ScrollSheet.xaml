@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<the49:BottomSheet xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:the49="https://schemas.the49.com/dotnet/2023/maui"
+             x:Class="Maui.BottomSheet.Sample.DemoPages.ScrollSheet"
+             HasHandle="True"
+                   >
+    <the49:BottomSheet.Detents>
+        <the49:FullscreenDetent />
+        <the49:MediumDetent />
+    </the49:BottomSheet.Detents>
+    <ScrollView Padding="32">
+        <VerticalStackLayout Spacing="32">
+            <BoxView WidthRequest="120" HeightRequest="120" Color="Salmon" />
+            <BoxView WidthRequest="120" HeightRequest="120" Color="Salmon" />
+            <BoxView WidthRequest="120" HeightRequest="120" Color="Salmon" />
+            <BoxView WidthRequest="120" HeightRequest="120" Color="Salmon" />
+            <BoxView WidthRequest="120" HeightRequest="120" Color="Salmon" />
+            <BoxView WidthRequest="120" HeightRequest="120" Color="Salmon" />
+            <BoxView WidthRequest="120" HeightRequest="120" Color="Salmon" />
+            <BoxView WidthRequest="120" HeightRequest="120" Color="Salmon" />
+            <BoxView WidthRequest="120" HeightRequest="120" Color="Salmon" />
+            <BoxView WidthRequest="120" HeightRequest="120" Color="Salmon" />
+            <BoxView WidthRequest="120" HeightRequest="120" Color="Salmon" />
+            <BoxView WidthRequest="120" HeightRequest="120" Color="Salmon" />
+            <BoxView WidthRequest="120" HeightRequest="120" Color="Salmon" />
+            <BoxView WidthRequest="120" HeightRequest="120" Color="Salmon" />
+        </VerticalStackLayout>
+    </ScrollView>
+</the49:BottomSheet>

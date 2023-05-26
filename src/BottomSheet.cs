@@ -1,4 +1,6 @@
-﻿namespace The49.Maui.BottomSheet;
+﻿using Microsoft.Maui.Controls;
+
+namespace The49.Maui.BottomSheet;
 
 public enum DismissOrigin
 {
@@ -67,11 +69,19 @@ public partial class BottomSheet : ContentView
         Resources.Add(new Style(typeof(Label)));
     }
 
+    double _tallestDetent = -1;
+
+    partial void CalculateTallestDetent(double heightConstraint);
+
     public override SizeRequest Measure(double widthConstraint, double heightConstraint, MeasureFlags flags = MeasureFlags.None)
     {
+        if (_tallestDetent == -1)
+        {
+            CalculateTallestDetent(heightConstraint);
+        }
         return new SizeRequest(
-            new Size(widthConstraint, heightConstraint),
-            new Size(widthConstraint, heightConstraint)
+            new Size(widthConstraint, _tallestDetent == -1 ? heightConstraint : _tallestDetent),
+            new Size(widthConstraint, _tallestDetent == -1 ? heightConstraint : _tallestDetent)
         );
     }
 
@@ -110,7 +120,13 @@ public partial class BottomSheet : ContentView
 
     internal IEnumerable<Detent> GetEnabledDetents()
     {
-        return Detents.Where(d => d.IsEnabled);
+        var enabledDetents = Detents.Where(d => d.IsEnabled);
+
+        if (enabledDetents.Count() == 0)
+        {
+            return new List<Detent> { new ContentDetent() };
+        }
+        return enabledDetents;
     }
 
     internal Detent GetDefaultDetent()

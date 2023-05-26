@@ -1,9 +1,10 @@
-﻿using The49.Maui.BottomSheet.DemoPages;
+﻿using The49.Maui.BottomSheet.Sample. DemoPages;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
+using Maui.BottomSheet.Sample.DemoPages;
 
-namespace The49.Maui.BottomSheet;
+namespace The49.Maui.BottomSheet.Sample;
 
 public class DemoEntry
 {
@@ -79,6 +80,12 @@ public partial class MainPage : ContentPage
             Title = "Fullscreen",
             Description = "Use the full height of the screen",
             Command = new Command(OpenFullscreenSheet),
+        },
+        new DemoEntry
+        {
+            Title = "With ScrollView",
+            Description = "Let the sheet expand, then scroll",
+            Command = new Command(OpenScrollView),
         },
         new DemoEntry
         {
@@ -280,6 +287,13 @@ public partial class MainPage : ContentPage
         page.HasBackdrop = true;
         page.SetExtraContent(new Button { Text = "Dismiss without animation", Command = new Command(() => page.DismissAsync(false)) });
         page.ShowAsync(Window, false);
+    }
+
+    void OpenScrollView()
+    {
+        var sheet = new ScrollSheet();
+
+        sheet.ShowAsync(Window);
     }
 
 #if ANDROID

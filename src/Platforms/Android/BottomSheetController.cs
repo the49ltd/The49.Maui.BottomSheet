@@ -14,8 +14,8 @@ namespace The49.Maui.BottomSheet;
 
 public class BottomSheetController
 {
-    public IDictionary<Detent, int> _states;
-    public IDictionary<Detent, double> _heights;
+    internal IDictionary<Detent, int> _states;
+    internal IDictionary<Detent, double> _heights;
 
     bool _isDuringShowingAnimation = false;
 
@@ -26,6 +26,7 @@ public class BottomSheetController
     ViewGroup _layout;
     BottomSheetBackdrop _backdrop;
     FrameLayout _container;
+    bool _edgeToEdgeEnabled;
 
     IMauiContext _windowMauiContext { get; }
     BottomSheet _sheet { get; }
@@ -34,6 +35,12 @@ public class BottomSheetController
     {
         _windowMauiContext = windowMauiContext;
         _sheet = sheet;
+        _edgeToEdgeEnabled =
+            _windowMauiContext
+            .Context
+            .Theme
+            .ObtainStyledAttributes(new int[] { Resource.Attribute.enableEdgeToEdge })
+            .GetBoolean(0, false);
     }
 
     internal void CalculateHeights(BottomSheet page, double maxSheetHeight)
@@ -41,11 +48,6 @@ public class BottomSheetController
         var detents = page.GetEnabledDetents().ToList();
 
         _heights = new Dictionary<Detent, double>();
-
-        if (detents.Count == 0)
-        {
-            detents = new List<Detent> { new ContentDetent() };
-        }
 
         foreach (var detent in detents)
         {
@@ -177,7 +179,7 @@ public class BottomSheetController
 
     void ContainerDetachedFromWindow(object sender, AView.ViewDetachedFromWindowEventArgs e)
     {
-        
+
     }
 
     void ContainerAttachedToWindow(object sender, AView.ViewAttachedToWindowEventArgs e)

@@ -1,8 +1,8 @@
 ﻿<maui:MauiWinUIApplication
-    x:Class="The49.Maui.BottomSheet.WinUI.App"
+    x:Class="The49.Maui.BottomSheet.Sample.WinUI.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:maui="using:Microsoft.Maui"
-    xmlns:local="using:The49.Maui.BottomSheet.WinUI">
+    xmlns:local="using:The49.Maui.BottomSheet.Sample.WinUI">
 
 </maui:MauiWinUIApplication>

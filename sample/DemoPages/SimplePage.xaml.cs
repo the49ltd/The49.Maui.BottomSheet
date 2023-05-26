@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace The49.Maui.BottomSheet.DemoPages;
+namespace The49.Maui.BottomSheet.Sample.DemoPages;
 
 public class ListAction
 {

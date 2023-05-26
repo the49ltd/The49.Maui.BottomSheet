@@ -25,10 +25,6 @@ internal partial class BottomSheetManager
 
             var pageDetents = sheet.GetEnabledDetents().ToList();
 
-            if (pageDetents.Count == 0)
-            {
-                pageDetents = new List<Detent> { new ContentDetent() };
-            }
             var detents = pageDetents
                 .Select((d, index) =>
                 {

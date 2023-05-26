@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace The49.Maui.BottomSheet;
+namespace The49.Maui.BottomSheet.Sample;
 
 public class Program
 {

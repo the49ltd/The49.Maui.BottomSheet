@@ -1,4 +1,4 @@
-﻿namespace The49.Maui.BottomSheet;
+﻿namespace The49.Maui.BottomSheet.Sample;
 
 public partial class App : Application
 {
