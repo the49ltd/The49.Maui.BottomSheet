@@ -104,6 +104,18 @@ public partial class MainPage : ContentPage
             Description = "define a detent to be opened by default",
             Command = new Command(OpenDefaultDetent),
         },
+        new DemoEntry
+        {
+            Title = "Content with scrolling collection",
+            Description = "the sheet contains a CollectionView",
+            Command = new Command(OpenWithCollectionView),
+        },
+        new DemoEntry
+        {
+            Title = "Content is ScrollView",
+            Description = "the sheet contains a ScrollView",
+            Command = new Command(OpenWithScrollView),
+        },
 #if ANDROID
         new DemoEntry
         {
@@ -282,6 +294,51 @@ public partial class MainPage : ContentPage
         page.ShowAsync(Window, false);
     }
 
+    void OpenWithCollectionView()
+    {
+        var page = new SimplePage
+        {
+            Detents = new DetentsCollection
+            {
+                new FullscreenDetent(),
+                new MediumDetent { IsDefault = true },
+                new RatioDetent { Ratio = .2f },
+            },
+            HasBackdrop = true,
+        };
+
+        page.SetExtraContent(
+            new CollectionView
+            {
+                HeightRequest = 400,
+                ItemsSource = Enumerable.Range(0,1000).Select(i => $"item {i}").ToList(),
+                ItemTemplate = new DataTemplate(() =>
+                {
+                    var label = new Label { Margin = new(20, 10, 20, 10) };
+                    label.SetBinding(Label.TextProperty, new Binding("."));
+                    return label;
+                })
+            });
+
+        page.ShowAsync(Window);
+    }
+
+    void OpenWithScrollView()
+    {
+        var page = new SimpleScrollViewPage
+        {
+            Detents = new DetentsCollection
+            {
+                new FullscreenDetent(),
+                new MediumDetent { IsDefault = true },
+                new RatioDetent { Ratio = .2f },
+            },
+            HasBackdrop = true,
+        };
+
+        page.ShowAsync(Window);
+    }
+
 #if ANDROID
     void OpenCustomizeBehavior()
     {
@@ -316,7 +373,7 @@ public partial class MainPage : ContentPage
         item.Command.Execute(null);
     }
 
-    void list_Scrolled(object sender, ItemsViewScrolledEventArgs e)
+    void list_Scrolled(object? sender, ItemsViewScrolledEventArgs e)
     {
         Header.TranslationY = Math.Max(-e.VerticalOffset, -72);
     }

@@ -48,7 +48,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="M.BindableProperty.Generator" Version="0.9.3" PrivateAssets="all" />
+		<PackageReference Include="M.BindableProperty.Generator" Version="0.10.0" PrivateAssets="all" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,0 +1,35 @@
+<the49:BottomSheet xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:the49="https://schemas.the49.com/dotnet/2023/maui"
+             x:Class="The49.Maui.BottomSheet.DemoPages.SimpleScrollViewPage"
+             x:Name="this"
+             Padding="16, 32">
+
+    <the49:BottomSheet.Resources>
+		<Style TargetType="Button">
+			<Setter Property="BackgroundColor" Value="Transparent" />
+			<Setter Property="TextColor" Value="Black" />
+			<Setter Property="HorizontalOptions" Value="StartAndExpand" />
+		</Style>
+	</the49:BottomSheet.Resources>
+
+	<ScrollView>
+
+        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Items, Source={x:Reference this}}" Spacing="4">
+
+            <BindableLayout.ItemTemplate>
+                <DataTemplate>
+
+                    <VerticalStackLayout>
+                        <Label Text="{Binding .}" Margin="20, 10" />
+                        <Line HeightRequest="1" BackgroundColor="LightCyan" />
+                    </VerticalStackLayout>
+
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
+</the49:BottomSheet>
