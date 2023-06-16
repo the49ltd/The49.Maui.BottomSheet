@@ -15,11 +15,17 @@ public partial class BottomSheetHandler
 
     partial void PlatformMapSelectedDetent(BottomSheet view)
     {
-        view.Controller.UpdateSelectedIdentifierFromDetent();
+        if (OperatingSystem.IsIOSVersionAtLeast(15))
+        {
+            view.Controller.UpdateSelectedIdentifierFromDetent();
+        }
     }
 
     partial void PlatformUpdateSelectedDetent(BottomSheet view)
     {
-        view.Controller.UpdateSelectedDetent();
+        if (OperatingSystem.IsIOSVersionAtLeast(15))
+        {
+            view.Controller.UpdateSelectedDetent();
+        }
     }
 }

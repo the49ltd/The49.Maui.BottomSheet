@@ -1,4 +1,5 @@
-﻿using Microsoft.Maui.Platform;
+﻿using System.Runtime.Versioning;
+using Microsoft.Maui.Platform;
 using UIKit;
 
 namespace The49.Maui.BottomSheet;
@@ -12,7 +13,10 @@ public class BottomSheetViewController : UIViewController
     {
         _windowMauiContext = windowMauiContext;
         _sheet = sheet;
-        SheetPresentationController.Delegate = new BottomSheetControllerDelegate(_sheet);
+        if (OperatingSystem.IsIOSVersionAtLeast(15))
+        {
+            SheetPresentationController.Delegate = new BottomSheetControllerDelegate(_sheet);
+        }
     }
 
     public override void ViewDidLoad()
@@ -42,16 +46,23 @@ public class BottomSheetViewController : UIViewController
         }
         else
         {
-            View.BackgroundColor = UIColor.SystemBackground;
+            if (OperatingSystem.IsIOSVersionAtLeast(13))
+            {
+                View.BackgroundColor = UIColor.SystemBackground;
+            }
         }
         _sheet.NotifyShowing();
     }
     public override void ViewDidLayoutSubviews()
     {
         base.ViewDidLayoutSubviews();
-        SheetPresentationController.InvalidateDetents();
+        if (OperatingSystem.IsIOSVersionAtLeast(16))
+        {
+            SheetPresentationController.InvalidateDetents();
+        }
     }
 
+    [SupportedOSPlatform("ios15.0")]
     internal static UISheetPresentationControllerDetentIdentifier GetIdentifierForDetent(Detent d)
     {
         if (d is FullscreenDetent)
@@ -65,6 +76,7 @@ public class BottomSheetViewController : UIViewController
         return UISheetPresentationControllerDetentIdentifier.Unknown;
     }
 
+    [SupportedOSPlatform("ios15.0")]
     internal void UpdateSelectedIdentifierFromDetent()
     {
         if (_sheet.SelectedDetent is null)
@@ -77,8 +89,13 @@ public class BottomSheetViewController : UIViewController
         });
     }
 
+    [SupportedOSPlatform("ios15.0")]
     internal Detent GetSelectedDetent()
     {
+        if (!OperatingSystem.IsIOSVersionAtLeast(15))
+        {
+            return null; ;
+        }
         var detents = _sheet.GetEnabledDetents();
         return SheetPresentationController.SelectedDetentIdentifier switch
         {
@@ -88,6 +105,7 @@ public class BottomSheetViewController : UIViewController
         };
     }
 
+    [SupportedOSPlatform("ios15.0")]
     internal void UpdateSelectedDetent()
     {
         _sheet.SelectedDetent = GetSelectedDetent();

@@ -1,7 +1,9 @@
-﻿using UIKit;
+﻿using System.Runtime.Versioning;
+using UIKit;
 
 namespace The49.Maui.BottomSheet;
 
+[SupportedOSPlatform("ios15.0")]
 internal class BottomSheetControllerDelegate : UISheetPresentationControllerDelegate
 {
     BottomSheet _sheet;

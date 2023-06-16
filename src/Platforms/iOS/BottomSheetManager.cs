@@ -9,81 +9,75 @@ internal partial class BottomSheetManager
         var controller = new BottomSheetViewController(window.Handler.MauiContext, sheet);
         sheet.Controller = controller;
 
-#if IOS15_0_OR_GREATER
-        controller.SheetPresentationController.PrefersGrabberVisible = sheet.HasHandle;
-#endif
-
-        var largestDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Unknown;
-
-        if (!sheet.HasBackdrop)
+        if (OperatingSystem.IsIOSVersionAtLeast(15))
         {
-            controller.SheetPresentationController.LargestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Large;
+            controller.SheetPresentationController.PrefersGrabberVisible = sheet.HasHandle;
         }
-
-        var pageDetents = sheet.GetEnabledDetents().ToList();
-
-        if (pageDetents.Count == 0)
+        if (OperatingSystem.IsIOSVersionAtLeast(15))
         {
-            pageDetents = new List<Detent> { new ContentDetent() };
-        }
+            var largestDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Unknown;
 
-#if IOS16_0_OR_GREATER
-        var detents = pageDetents
-            .Select((d, index) =>
+            if (!sheet.HasBackdrop)
             {
-                if (d is FullscreenDetent)
+                controller.SheetPresentationController.LargestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Large;
+            }
+
+
+            var pageDetents = sheet.GetEnabledDetents().ToList();
+
+            if (pageDetents.Count == 0)
+            {
+                pageDetents = new List<Detent> { new ContentDetent() };
+            }
+            var detents = pageDetents
+                .Select((d, index) =>
                 {
-                    largestDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Large;
-                    return UISheetPresentationControllerDetent.CreateLargeDetent();
-                }
-                else if (d is RatioDetent ratioDetent && ratioDetent.Ratio == .5)
-                {
-                    largestDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Medium;
-                    return UISheetPresentationControllerDetent.CreateMediumDetent();
-                }
-                return UISheetPresentationControllerDetent.Create($"detent{index}", (context) =>
-                {
-                    
-                    if (!sheet.CachedDetents.ContainsKey(index))
+                    if (d is FullscreenDetent)
                     {
-                        sheet.CachedDetents.Add(index, (float)d.GetHeight(sheet, context.MaximumDetentValue));
+                        largestDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Large;
+                        return UISheetPresentationControllerDetent.CreateLargeDetent();
                     }
-                    return sheet.CachedDetents[index];
-                });
-            }).ToArray();
-#elif IOS15_0_OR_GREATER
-        UISheetPresentationControllerDetent[] detents;
-        if (pageDetents.Count == 1)
-        {
-            detents = new UISheetPresentationControllerDetent[]
-            {
-                UISheetPresentationControllerDetent.CreateMediumDetent(),
-            };
-            largestDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Medium;
-        }
-        else
-        {
-            detents = new UISheetPresentationControllerDetent[]
-            {
-                UISheetPresentationControllerDetent.CreateLargeDetent(),
-                UISheetPresentationControllerDetent.CreateMediumDetent(),
-            };
-            largestDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Large;
-        }
-#endif
-#if IOS15_0_OR_GREATER
-        controller.SheetPresentationController.Detents = detents;
-#endif
-#if IOS13_0_OR_GREATER
-        controller.ModalInPresentation = !sheet.IsCancelable;
-#endif
+                    else if (d is RatioDetent ratioDetent && ratioDetent.Ratio == .5)
+                    {
+                        largestDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Medium;
+                        return UISheetPresentationControllerDetent.CreateMediumDetent();
+                    }
+                    if (!OperatingSystem.IsIOSVersionAtLeast(16))
+                    {
+                        return null;
+                    }
+                    return UISheetPresentationControllerDetent.Create($"detent{index}", (context) =>
+                    {
+                        if (!sheet.CachedDetents.ContainsKey(index))
+                        {
+                            sheet.CachedDetents.Add(index, (float)d.GetHeight(sheet, context.MaximumDetentValue));
+                        }
+                        return sheet.CachedDetents[index];
+                    });
+                })
+                .Where(d => d is not null)
+                .ToList();
 
-        if (!sheet.HasBackdrop)
-        {
-            controller.SheetPresentationController.LargestUndimmedDetentIdentifier = largestDetentIdentifier;
+            if (detents.Count == 0)
+            {
+                largestDetentIdentifier = UISheetPresentationControllerDetentIdentifier.Medium;
+                detents.Add(UISheetPresentationControllerDetent.CreateMediumDetent());
+            }
+
+            controller.SheetPresentationController.Detents = detents.ToArray();
+
+            if (!sheet.HasBackdrop)
+            {
+                controller.SheetPresentationController.LargestUndimmedDetentIdentifier = largestDetentIdentifier;
+            }
+
+            controller.SheetPresentationController.SelectedDetentIdentifier = BottomSheetViewController.GetIdentifierForDetent(sheet.SelectedDetent);
         }
 
-        controller.SheetPresentationController.SelectedDetentIdentifier = BottomSheetViewController.GetIdentifierForDetent(sheet.SelectedDetent);
+        if (OperatingSystem.IsIOSVersionAtLeast(13))
+        {
+            controller.ModalInPresentation = !sheet.IsCancelable;
+        }
 
         var parent = Platform.GetCurrentUIViewController();
 
