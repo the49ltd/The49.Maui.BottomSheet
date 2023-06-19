@@ -111,6 +111,12 @@ public partial class MainPage : ContentPage
             Description = "define a detent to be opened by default",
             Command = new Command(OpenDefaultDetent),
         },
+        new DemoEntry
+        {
+            Title = "Open modal page",
+            Description = "A sheet should behave correctly around opening a modal page",
+            Command = new Command(OpenModalPage),
+        },
 #if ANDROID
         new DemoEntry
         {
@@ -296,6 +302,33 @@ public partial class MainPage : ContentPage
         sheet.ShowAsync(Window);
     }
 
+    void OpenModalPage()
+    {
+        var page = new SimplePage();
+        page.Detents = new DetentsCollection()
+        {
+            new FullscreenDetent(),
+            new ContentDetent(),
+        };
+        page.HasBackdrop = true;
+        var b = new Button {
+            Text = "Go to page"
+        };
+
+        var g = new TapGestureRecognizer
+        {
+            Command = new Command(() =>
+            {
+                page.DismissAsync(false);
+                Shell.Current.GoToAsync("//ModalPage");
+            }),
+        };
+
+        b.GestureRecognizers.Add(g);
+        page.SetExtraContent(b);
+        page.ShowAsync(Window);
+    }
+
 #if ANDROID
     void OpenCustomizeBehavior()
     {
@@ -335,7 +368,7 @@ public partial class MainPage : ContentPage
         Header.TranslationY = Math.Max(-e.VerticalOffset, -72);
     }
 
-    private void TapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
+    void TapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
     {
         var item = (DemoEntry)((BindableObject)sender).BindingContext;
         if (item == null)
@@ -343,6 +376,11 @@ public partial class MainPage : ContentPage
             return;
         }
         item.Command.Execute(null);
+    }
+
+    void Button_Clicked(object sender, EventArgs e)
+    {
+        Shell.Current.GoToAsync("//ModalPage");
     }
 }
 

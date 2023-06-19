@@ -26,7 +26,6 @@ public class BottomSheetController
     ViewGroup _layout;
     BottomSheetBackdrop _backdrop;
     FrameLayout _container;
-    bool _edgeToEdgeEnabled;
 
     IMauiContext _windowMauiContext { get; }
     BottomSheet _sheet { get; }
@@ -35,12 +34,6 @@ public class BottomSheetController
     {
         _windowMauiContext = windowMauiContext;
         _sheet = sheet;
-        _edgeToEdgeEnabled =
-            _windowMauiContext
-            .Context
-            .Theme
-            .ObtainStyledAttributes(new int[] { Resource.Attribute.enableEdgeToEdge })
-            .GetBoolean(0, false);
     }
 
     internal void CalculateHeights(BottomSheet page, double maxSheetHeight)
@@ -117,6 +110,9 @@ public class BottomSheetController
         _frame = null;
         _container = null;
         _backdrop = null;
+
+        var window = ((Activity)_windowMauiContext.Context).Window;
+        WindowCompat.SetDecorFitsSystemWindows(window, false);
     }
 
     public void Layout()
@@ -179,14 +175,11 @@ public class BottomSheetController
 
     void ContainerDetachedFromWindow(object sender, AView.ViewDetachedFromWindowEventArgs e)
     {
-
-    }
-
-    void ContainerAttachedToWindow(object sender, AView.ViewAttachedToWindowEventArgs e)
-    {
-        var window = ((Activity)_sheet.Window.Handler.PlatformView).Window;
+        var window = ((Activity)_windowMauiContext.Context).Window;
         WindowCompat.SetDecorFitsSystemWindows(window, false);
     }
+
+    void ContainerAttachedToWindow(object sender, AView.ViewAttachedToWindowEventArgs e) { }
 
     private void BackdropClicked(object sender, EventArgs e)
     {

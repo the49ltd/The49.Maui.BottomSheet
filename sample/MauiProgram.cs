@@ -12,7 +12,7 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
-            .UseInsets()
+            //.UseInsets()
             .UseBottomSheet()
             .ConfigureFonts(fonts =>
             {
