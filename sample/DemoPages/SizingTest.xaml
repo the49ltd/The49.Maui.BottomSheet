@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<the49:BottomSheet xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:the49="https://schemas.the49.com/dotnet/2023/maui"
+             x:Class="Maui.BottomSheet.Sample.DemoPages.SizingTest"
+             HasHandle="True"
+                   >
+    <the49:BottomSheet.Detents>
+        <the49:FullscreenDetent />
+        <the49:RatioDetent Ratio=".95" />
+        <the49:RatioDetent Ratio=".5" />
+    </the49:BottomSheet.Detents>
+    <Grid RowDefinitions="*,100">
+        <Grid Grid.Row="0" BackgroundColor="Orange" Opacity=".5" />
+        <Button Grid.Row="1" HeightRequest="100" Text="this will be cut off" />
+    </Grid>
+</the49:BottomSheet>

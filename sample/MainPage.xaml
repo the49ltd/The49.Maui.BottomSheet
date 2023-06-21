@@ -4,6 +4,7 @@
              xmlns:the49="https://schemas.the49.com/dotnet/2023/maui"
              x:Class="The49.Maui.BottomSheet.Sample.MainPage"
              x:Name="this"
+             the49:Insets.EdgeToEdge="False"
              NavigationPage.HasNavigationBar="False"
              >
     <ContentPage.Resources>

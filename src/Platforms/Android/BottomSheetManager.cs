@@ -25,7 +25,7 @@ internal partial class BottomSheetManager
         }
         var containerView = page.ToContainerView(mauiContext);
 
-        var r = page.Measure(page.Window.Width, page.Window.Height);
+        var r = page.Measure(page.Window.Width, page.Controller.GetAvailableHeight());
 
         containerView.LayoutParameters = new(ViewGroup.LayoutParams.MatchParent, (int)Math.Round(r.Request.Height * DeviceDisplay.MainDisplayInfo.Density));
         var layout = new FrameLayout(mauiContext.Context);
@@ -38,7 +38,7 @@ internal partial class BottomSheetManager
             }
             layout.AddView(handle, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent));
         }
-        layout.AddView(containerView);
+        layout.AddView(containerView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
 
         return layout;
     }

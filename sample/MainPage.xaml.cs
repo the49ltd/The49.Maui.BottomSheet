@@ -117,6 +117,12 @@ public partial class MainPage : ContentPage
             Description = "A sheet should behave correctly around opening a modal page",
             Command = new Command(OpenModalPage),
         },
+        new DemoEntry
+        {
+            Title = "Sizing test",
+            Description = "Check that the content is sized to the sheet",
+            Command = new Command(OpenSizingTest),
+        },
 #if ANDROID
         new DemoEntry
         {
@@ -327,6 +333,13 @@ public partial class MainPage : ContentPage
         b.GestureRecognizers.Add(g);
         page.SetExtraContent(b);
         page.ShowAsync(Window);
+    }
+
+    void OpenSizingTest()
+    {
+        var t = new SizingTest();
+
+        t.ShowAsync(Window);
     }
 
 #if ANDROID

@@ -66,6 +66,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="DemoPages\SizingTest.xaml.cs">
+	    <DependentUpon>SizingTest.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="DemoPages\SizingTest.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="DemoPages\ScrollSheet.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

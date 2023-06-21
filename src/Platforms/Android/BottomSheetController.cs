@@ -9,13 +9,31 @@ using AView = Android.Views.View;
 using Exception = System.Exception;
 using AndroidX.Core.View;
 using Android.App;
+using AndroidX.Core.Graphics;
+using Insets = AndroidX.Core.Graphics.Insets;
 
 namespace The49.Maui.BottomSheet;
 
 public class BottomSheetController
 {
+    class EdgeToEdgeListener : Java.Lang.Object, IOnApplyWindowInsetsListener
+    {
+        BottomSheetController _controller;
+        public EdgeToEdgeListener(BottomSheetController controller)
+        {
+            _controller = controller;
+        }
+        public WindowInsetsCompat OnApplyWindowInsets(AView v, WindowInsetsCompat insets)
+        {
+            var i = insets.GetInsets(WindowInsetsCompat.Type.SystemBars());
+            _controller._insets = i;
+            return ViewCompat.OnApplyWindowInsets(v, insets);
+        }
+    }
     internal IDictionary<Detent, int> _states;
     internal IDictionary<Detent, double> _heights;
+
+    Insets _insets;
 
     bool _isDuringShowingAnimation = false;
 
@@ -117,9 +135,7 @@ public class BottomSheetController
 
     public void Layout()
     {
-        // TODO: verify that, maybe handle statusbar and navigationbar
-        var maxSheetHeight = _sheet.Window.Height;
-        BottomSheetManager.LayoutDetents(_behavior, _frame, _heights, maxSheetHeight);
+        BottomSheetManager.LayoutDetents(_behavior, _frame, _heights, GetAvailableHeight());
     }
 
     public void UpdateBackground()
@@ -158,6 +174,11 @@ public class BottomSheetController
 
         _frame = (FrameLayout)_container.FindViewById(Resource.Id.design_bottom_sheet);
 
+        _frame.OutlineProvider = ViewOutlineProvider.Background;
+        _frame.ClipToOutline = true;
+
+        ViewCompat.SetOnApplyWindowInsetsListener(_container, new EdgeToEdgeListener(this));
+
         _behavior = BottomSheetBehavior.From(_frame);
 
         var rootView = FindNavigationRootView();
@@ -186,16 +207,17 @@ public class BottomSheetController
         Dismiss(true);
     }
 
+    public double GetAvailableHeight()
+    {
+        var density = DeviceDisplay.MainDisplayInfo.Density;
+
+        return (_container.Height - (_insets?.Top ?? 0) - (_insets?.Bottom ?? 0)) / density;
+    }
+
     public void Show(bool animated)
     {
         _isDuringShowingAnimation = true;
         SetupCoordinatorLayout();
-
-        _layout = BottomSheetManager.CreateLayout(_sheet, _windowMauiContext);
-
-        _layout.LayoutChange += OnLayoutChange;
-
-        _frame.AddView(_layout);
 
         var callback = new BottomSheetCallback(_sheet);
         callback.StateChanged += Callback_StateChanged;
@@ -209,10 +231,16 @@ public class BottomSheetController
 
         _sheet.Dispatcher.Dispatch(() =>
         {
+            _layout = BottomSheetManager.CreateLayout(_sheet, _windowMauiContext);
+
+            _layout.LayoutChange += OnLayoutChange;
+
+            _frame.AddView(_layout);
             UpdateBackground();
-            Layout();
-            CalculateHeights(_sheet, _sheet.Window.Height);
+            var h = GetAvailableHeight();
+            CalculateHeights(_sheet, GetAvailableHeight());
             CalculateStates();
+            Layout();
 
             var state = GetStateForDetent(_sheet.SelectedDetent);
 
@@ -230,7 +258,7 @@ public class BottomSheetController
 
     void OnLayoutChange(object sender, AView.LayoutChangeEventArgs e)
     {
-        CalculateHeights(_sheet, _sheet.Window.Height);
+        CalculateHeights(_sheet, GetAvailableHeight());
         CalculateStates();
         Layout();
     }
