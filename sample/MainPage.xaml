@@ -4,7 +4,6 @@
              xmlns:the49="https://schemas.the49.com/dotnet/2023/maui"
              x:Class="The49.Maui.BottomSheet.Sample.MainPage"
              x:Name="this"
-             the49:Insets.EdgeToEdge="False"
              NavigationPage.HasNavigationBar="False"
              >
     <ContentPage.Resources>
@@ -24,24 +23,17 @@
             </Setter>
         </Style>
     </ContentPage.Resources>
-    <Grid RowDefinitions="Auto, *" the49:Insets.CancelIOSPadding="True">
-        <the49:TopInsetView BackgroundColor="{StaticResource Primary}" x:Name="Header">
-            <HorizontalStackLayout HeightRequest="128" Padding="16, 0, 0, 8">
-                <Label
-                    Text="Maui.BottomSheet"
-                    Style="{StaticResource HeadlineLarge}"
-                    TextColor="{StaticResource White}"
-                    VerticalOptions="End" />
-                <Button Text="OpenModalPage" Clicked="Button_Clicked" />
-            </HorizontalStackLayout>
-        </the49:TopInsetView>
+    <Grid RowDefinitions="Auto, *">
+        <HorizontalStackLayout Padding="16, 0, 0, 8" BackgroundColor="{StaticResource Primary}" x:Name="Header">
+            <Label
+                Text="Maui.BottomSheet"
+                Style="{StaticResource HeadlineLarge}"
+                TextColor="{StaticResource White}"
+                VerticalOptions="End" />
+            <Button Text="OpenModalPage" Clicked="Button_Clicked" />
+        </HorizontalStackLayout>
         <RefreshView Grid.Row="1" IsEnabled="False">
             <ListView BackgroundColor="Transparent" Scrolled="list_Scrolled" ItemsSource="{Binding Demos, Source={x:Reference this}}" SelectionMode="Single" x:Name="list" HasUnevenRows="True">
-                <ListView.FooterTemplate>
-                    <DataTemplate>
-                        <the49:BottomInsetView />
-                    </DataTemplate>
-                </ListView.FooterTemplate>
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>

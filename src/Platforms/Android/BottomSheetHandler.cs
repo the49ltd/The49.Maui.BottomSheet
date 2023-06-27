@@ -5,6 +5,7 @@ public partial class BottomSheetHandler
     public static void MapBackground(BottomSheetHandler handler, BottomSheet page)
     {
         // Leave the background empty, the parent sheet handles the color
+        page.Controller.UpdateBackground();
     }
 
     partial void Dismiss(BottomSheet view, object request)

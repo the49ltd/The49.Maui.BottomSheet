@@ -12,7 +12,8 @@ public class BottomSheetCallback : BottomSheetBehavior.BottomSheetCallback
     {
         _page = page;
     }
-    public override void OnSlide(AView bottomSheet, float newState) {}
+    public override void OnSlide(AView bottomSheet, float newState)
+    {}
 
     public override void OnStateChanged(AView view, int newState)
     {

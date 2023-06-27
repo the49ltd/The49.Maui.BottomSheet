@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
-using The49.Maui.Insets;
 
 namespace The49.Maui.BottomSheet.Sample;
 
@@ -12,7 +11,6 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
-            .UseInsets()
             .UseBottomSheet()
             .ConfigureFonts(fonts =>
             {
