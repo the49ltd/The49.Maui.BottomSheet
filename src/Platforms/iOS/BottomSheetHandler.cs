@@ -4,7 +4,11 @@ public partial class BottomSheetHandler
 {
     public static void MapBackground(BottomSheetHandler handler, BottomSheet view)
     {
-        // Leave the background empty, the parent sheet handles the color
+        view.Controller.UpdateBackground();
+    }
+    partial void PlatformUpdateHandleColor(BottomSheet view)
+    {
+        // Not supported on iOS
     }
 
     partial void Dismiss(BottomSheet view, object request)

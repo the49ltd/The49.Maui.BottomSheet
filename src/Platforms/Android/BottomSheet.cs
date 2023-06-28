@@ -12,7 +12,7 @@ public partial class BottomSheet
         }
         if (Controller._heights is null)
         {
-            Controller.CalculateHeights(this, heightConstraint);
+            Controller.CalculateHeights(heightConstraint);
         }
         _tallestDetent = Controller._heights.Values.Max();
     }
