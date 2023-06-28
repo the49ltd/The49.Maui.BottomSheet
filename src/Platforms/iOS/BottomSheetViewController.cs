@@ -39,7 +39,12 @@ public class BottomSheetViewController : UIViewController
             cv.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor)
         });
 
-        if (_sheet.BackgroundBrush != null)
+        UpdateBackground();
+        _sheet.NotifyShowing();
+    }
+    internal void UpdateBackground()
+    {
+        if (_sheet?.BackgroundBrush != null)
         {
             Paint paint = _sheet.BackgroundBrush;
             View.BackgroundColor = paint.ToColor().ToPlatform();
@@ -51,7 +56,6 @@ public class BottomSheetViewController : UIViewController
                 View.BackgroundColor = UIColor.SystemBackground;
             }
         }
-        _sheet.NotifyShowing();
     }
     public override void ViewDidLayoutSubviews()
     {

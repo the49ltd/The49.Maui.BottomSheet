@@ -2,13 +2,10 @@
 using Microsoft.Maui.Platform;
 using Google.Android.Material.BottomSheet;
 using Android.Widget;
-using AndroidX.CoordinatorLayout.Widget;
 using Android.Content.Res;
 using AView = Android.Views.View;
 using AWindow = Android.Views.Window;
 using AndroidX.Core.View;
-using Android.App;
-using Insets = AndroidX.Core.Graphics.Insets;
 using AndroidX.AppCompat.App;
 using Google.Android.Material.Internal;
 
@@ -28,7 +25,7 @@ public class BottomSheetController
         public EdgeToEdgeCallback(
             AView bottomSheet, WindowInsetsCompat insetsCompat)
         {
-            this._insetsCompat = insetsCompat;
+            _insetsCompat = insetsCompat;
 
             // Try to find the background color to automatically change the status bar icons so they will
             // still be visible when the bottomsheet slides underneath the status bar.
@@ -120,8 +117,7 @@ public class BottomSheetController
         }
         public WindowInsetsCompat OnApplyWindowInsets(AView v, WindowInsetsCompat insets)
         {
-            var i = insets.GetInsets(WindowInsetsCompat.Type.SystemBars());
-            _controller._insets = i;
+            _controller.SetInsets(insets);
 
             if (_edgeToEdgeCallback is not null)
             {
@@ -142,19 +138,15 @@ public class BottomSheetController
     internal IDictionary<Detent, int> _states;
     internal IDictionary<Detent, double> _heights;
 
-    Insets _insets;
-
     bool _isDuringShowingAnimation = false;
 
     BottomSheetBehavior _behavior;
     public BottomSheetBehavior Behavior => _behavior;
 
     ViewGroup _frame;
-    ViewGroup _layout;
-    BottomSheetBackdrop _backdrop;
-    FrameLayout _container;
-    FrameLayout _windowContainer;
-    private BottomSheetDragHandleView _handle;
+    BottomSheetContainer _windowContainer;
+    BottomSheetDragHandleView _handle;
+    WindowInsetsCompat _insets;
 
     IMauiContext _windowMauiContext { get; }
     BottomSheet _sheet { get; }
@@ -218,7 +210,7 @@ public class BottomSheetController
 
         if (animated)
         {
-            _backdrop?.AnimateOut();
+            _windowContainer?.Backdrop.AnimateOut();
             Behavior.Hideable = true;
             Behavior.State = BottomSheetBehavior.StateHidden;
         }
@@ -231,22 +223,13 @@ public class BottomSheetController
 
     void Dispose()
     {
-        _layout.LayoutChange -= OnLayoutChange;
-
-        _container.RemoveFromParent();
-        _backdrop?.RemoveFromParent();
-
-        _frame = null;
-        _container = null;
-        _backdrop = null;
-
-        var window = ((Activity)_windowMauiContext.Context).Window;
-        //WindowCompat.SetDecorFitsSystemWindows(window, false);
+        _frame.LayoutChange -= OnLayoutChange;
+        _windowContainer.RemoveFromParent();
     }
 
     public void Layout()
     {
-        LayoutDetents(_behavior, _frame, _heights, GetAvailableHeight());
+        LayoutDetents(_heights, GetAvailableHeight());
     }
 
     internal void UpdateBackground()
@@ -270,47 +253,36 @@ public class BottomSheetController
         }
     }
 
+    ViewGroup GetParentView()
+    {
+        return Window?.DecorView as ViewGroup;
+    }
+
     void EnsureWindowContainer()
     {
         if (_windowContainer is null)
         {
-            var windowPv = _sheet.Window.Handler.PlatformView as AppCompatActivity;
-            var window = windowPv.Window;
-            _windowContainer = new FrameLayout(_windowMauiContext.Context);
-            window.AddContentView(_windowContainer, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
+            var container = (FrameLayout)AView.Inflate(_windowMauiContext.Context, Resource.Layout.the49_maui_bottom_sheet_design, null);
+
+            container.ViewAttachedToWindow += ContainerAttachedToWindow;
+            container.ViewDetachedFromWindow += ContainerDetachedFromWindow;
+
+            _windowContainer = new BottomSheetContainer(_windowMauiContext.Context, container);
+            _windowContainer.Backdrop.Click += BackdropClicked;
+
+            _frame = (FrameLayout)container.FindViewById(Resource.Id.design_bottom_sheet);
+
+            _frame.OutlineProvider = ViewOutlineProvider.Background;
+            _frame.ClipToOutline = true;
+
+            ViewCompat.SetOnApplyWindowInsetsListener(_windowContainer, new EdgeToEdgeListener(this));
+
+            _behavior = BottomSheetBehavior.From(_frame);
+
+            var callback = new BottomSheetCallback(_sheet);
+            callback.StateChanged += Callback_StateChanged;
+            _behavior.AddBottomSheetCallback(callback);
         }
-    }
-
-    void SetupCoordinatorLayout()
-    {
-        _container =
-            (FrameLayout)AView.Inflate(_windowMauiContext.Context, Resource.Layout.the49_maui_bottom_sheet_design, null);
-
-        _container.ViewAttachedToWindow += ContainerAttachedToWindow;
-        _container.ViewDetachedFromWindow += ContainerDetachedFromWindow;
-
-        _frame = (FrameLayout)_container.FindViewById(Resource.Id.design_bottom_sheet);
-
-        _frame.OutlineProvider = ViewOutlineProvider.Background;
-        _frame.ClipToOutline = true;
-
-        ViewCompat.SetOnApplyWindowInsetsListener(_container, new EdgeToEdgeListener(this));
-
-        _behavior = BottomSheetBehavior.From(_frame);
-
-        EnsureWindowContainer();
-
-        _windowContainer.RemoveAllViews();
-
-        if (_sheet.HasBackdrop)
-        {
-            _backdrop = new BottomSheetBackdrop(_windowMauiContext.Context);
-            _backdrop.Click += BackdropClicked;
-
-            _windowContainer.AddView(_backdrop, new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
-        }
-
-        _windowContainer.AddView(_container, new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
     }
 
     void ContainerDetachedFromWindow(object sender, AView.ViewDetachedFromWindowEventArgs e)
@@ -318,45 +290,32 @@ public class BottomSheetController
 
     }
 
-    void ContainerAttachedToWindow(object sender, AView.ViewAttachedToWindowEventArgs e) { }
+    void ContainerAttachedToWindow(object sender, AView.ViewAttachedToWindowEventArgs e)
+    {
+    
+    }
 
     private void BackdropClicked(object sender, EventArgs e)
     {
         Dismiss(true);
     }
 
+    void SetInsets(WindowInsetsCompat insets)
+    {
+        _insets = insets;
+        CalculateHeights(_sheet, GetAvailableHeight());
+        ResizeVirtualView();
+        Layout();
+    }
+
     public double GetAvailableHeight()
     {
         var density = DeviceDisplay.MainDisplayInfo.Density;
 
-        return (_container.Height) / density;
+        return (_windowContainer.Height - (_insets?.SystemWindowInsetTop ?? 0) - (_insets?.SystemWindowInsetBottom ?? 0)) / density;
     }
 
-    ViewGroup CreateLayout()
-    {
-        // The Android view for the page could already have a ContainerView as a parent if it was shown as a bottom sheet before
-        if (((AView)_sheet.Handler?.PlatformView)?.Parent is ContainerView cv)
-        {
-            cv.RemoveAllViews();
-        }
-        var containerView = _sheet.ToContainerView(_windowMauiContext);
-
-        var r = _sheet.Measure(_sheet.Window.Width, GetAvailableHeight());
-
-        containerView.LayoutParameters = new(ViewGroup.LayoutParams.MatchParent, (int)Math.Round(r.Request.Height * DeviceDisplay.MainDisplayInfo.Density));
-        var layout = new FrameLayout(_windowMauiContext.Context);
-        if (_sheet.HasHandle)
-        {
-            _handle = new BottomSheetDragHandleView(_windowMauiContext.Context);
-            UpdateHandleColor();
-            layout.AddView(_handle, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent));
-        }
-        layout.AddView(containerView);
-
-        return layout;
-    }
-
-    internal static void LayoutDetents(BottomSheetBehavior behavior, ViewGroup container, IDictionary<Detent, double> heights, double maxSheetHeight)
+    internal void LayoutDetents(IDictionary<Detent, double> heights, double maxSheetHeight)
     {
         // Android supports the following detents:
         // - expanded (top of screen - offset)
@@ -366,76 +325,118 @@ public class BottomSheetController
         var sortedHeights = heights
             .OrderByDescending(i => i.Value)
             .ToList();
-
+        var density = DeviceDisplay.MainDisplayInfo.Density;
+        var topInset = _insets?.SystemWindowInsetTop ?? 0;
 
         if (sortedHeights.Count == 1)
         {
-            behavior.FitToContents = true;
-            behavior.SkipCollapsed = true;
+            _behavior.FitToContents = true;
+            _behavior.SkipCollapsed = true;
             var top = sortedHeights[0].Value;
-            container.LayoutParameters.Height = (int)(top * DeviceDisplay.MainDisplayInfo.Density);
+            _frame.LayoutParameters.Height = (int)(top * density);
+            if (top == maxSheetHeight)
+            {
+                _frame.LayoutParameters.Height += topInset;
+            }
         }
         else if (sortedHeights.Count == 2)
         {
-            behavior.FitToContents = true;
-            behavior.SkipCollapsed = false;
+            _behavior.FitToContents = true;
+            _behavior.SkipCollapsed = false;
             var top = sortedHeights[0].Value;
-            container.LayoutParameters.Height = (int)(top * DeviceDisplay.MainDisplayInfo.Density);
+            _frame.LayoutParameters.Height = (int)(top * density);
+
+            if (top == maxSheetHeight)
+            {
+                _frame.LayoutParameters.Height += topInset;
+            }
+
             var bottom = sortedHeights[1].Value;
 
-            behavior.PeekHeight = (int)(bottom * DeviceDisplay.MainDisplayInfo.Density);
+            _behavior.PeekHeight = (int)(bottom * density);
         }
         else if (sortedHeights.Count == 3)
         {
-            behavior.FitToContents = false;
-            behavior.SkipCollapsed = false;
+            _behavior.FitToContents = false;
+            _behavior.SkipCollapsed = false;
             var top = sortedHeights[0].Value;
             var midway = sortedHeights[1].Value;
             var bottom = sortedHeights[2].Value;
 
-            container.LayoutParameters.Height = (int)(top * DeviceDisplay.MainDisplayInfo.Density);
+            _frame.LayoutParameters.Height = (int)(top * density);
+
+            if (top == maxSheetHeight)
+            {
+                _frame.LayoutParameters.Height += topInset;
+            }
 
             // Set the top detent by offsetting the requested height from the maxHeight
-            var topOffset = (maxSheetHeight - top) * DeviceDisplay.MainDisplayInfo.Density;
-            behavior.ExpandedOffset = (int)topOffset;
+            var topOffset = (maxSheetHeight - top) * density;
+            _behavior.ExpandedOffset = (int)topOffset;
 
             // Set the midway detent by calculating the ratio using the top detent info
-            var ratio = midway / top;
-            behavior.HalfExpandedRatio = (float)ratio;
+            var ratio = (midway * density) / _frame.LayoutParameters.Height;
+            _behavior.HalfExpandedRatio = (float)ratio;
 
             // Set the bottom detent using the peekHeight
-            behavior.PeekHeight = (int)(bottom * DeviceDisplay.MainDisplayInfo.Density);
+            _behavior.PeekHeight = (int)(bottom * density);
         }
 
-        container.RequestLayout();
+        _frame.RequestLayout();
     }
 
     AWindow Window => ((AppCompatActivity)_windowMauiContext.Context).Window;
 
+    void ResizeVirtualView()
+    {
+        var pv = (ContentViewGroup)_sheet.Handler?.PlatformView;
+        var h = GetAvailableHeight();
+        _sheet.InvalidateTallestDetent();
+        var r = _sheet.Measure(_sheet.Window.Width, h);
+        pv.LayoutParameters.Width = ViewGroup.LayoutParams.MatchParent;
+        pv.LayoutParameters.Height = (int)Math.Round(r.Request.Height * DeviceDisplay.MainDisplayInfo.Density);
+        pv.RequestLayout();
+    }
+
     public void Show(bool animated)
     {
         _isDuringShowingAnimation = true;
-        SetupCoordinatorLayout();
 
-        var callback = new BottomSheetCallback(_sheet);
-        callback.StateChanged += Callback_StateChanged;
-        Behavior.AddBottomSheetCallback(callback);
+        var parent = GetParentView();
+
+        EnsureWindowContainer();
+
+        parent.AddView(_windowContainer);
+
+        _frame.RemoveAllViews();
+
+        // The Android view for the page could already have a ContainerView as a parent if it was shown as a bottom sheet before
+        ((ContentViewGroup)_sheet.Handler?.PlatformView)?.RemoveFromParent();
+        var containerView = _sheet.ToContainerView(_windowMauiContext);
+
+        if (_sheet.HasHandle)
+        {
+            _handle = new BottomSheetDragHandleView(_windowMauiContext.Context);
+            _frame.AddView(_handle, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent));
+        }
+
+        _frame.AddView(containerView);
+
+        UpdateBackground();
+        UpdateHasBackdrop();
+        UpdateHandleColor();
 
         if (animated)
         {
-            _backdrop?.AnimateIn();
+            _windowContainer?.Backdrop.AnimateIn();
             _behavior.State = BottomSheetBehavior.StateHidden;
         }
 
         _sheet.Dispatcher.Dispatch(() =>
         {
-            _layout = CreateLayout();
+            ResizeVirtualView();
 
-            _layout.LayoutChange += OnLayoutChange;
-
-            _frame.AddView(_layout);
-            UpdateBackground();
-            var h = GetAvailableHeight();
+            _frame.LayoutChange += OnLayoutChange;
             CalculateHeights(_sheet, GetAvailableHeight());
             CalculateStates();
             Layout();
@@ -497,5 +498,10 @@ public class BottomSheetController
             return;
         }
         Behavior.State = GetStateForDetent(_sheet.SelectedDetent);
+    }
+
+    internal void UpdateHasBackdrop()
+    {
+        _windowContainer?.SetBackdropVisibility(_sheet.HasBackdrop);
     }
 }

@@ -2,10 +2,13 @@
 
 public partial class BottomSheetHandler
 {
-    public static void MapBackground(BottomSheetHandler handler, BottomSheet page)
+    public static void MapBackground(BottomSheetHandler handler, BottomSheet sheet)
     {
-        // Leave the background empty, the parent sheet handles the color
-        page.Controller.UpdateBackground();
+        sheet.Controller.UpdateBackground();
+    }
+    partial void PlatformUpdateHandleColor(BottomSheet view)
+    {
+        view.Controller.UpdateHandleColor();
     }
 
     partial void Dismiss(BottomSheet view, object request)
@@ -21,5 +24,10 @@ public partial class BottomSheetHandler
     partial void PlatformMapSelectedDetent(BottomSheet view)
     {
         view.Controller.UpdateStateFromDetent();
+    }
+
+    partial void PlatformUpdateHasBackdrop(BottomSheet view)
+    {
+        view.Controller.UpdateHasBackdrop();
     }
 }

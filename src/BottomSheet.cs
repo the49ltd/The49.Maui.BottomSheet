@@ -71,6 +71,11 @@ public partial class BottomSheet : ContentView
 
     double _tallestDetent = -1;
 
+    internal void InvalidateTallestDetent()
+    {
+        _tallestDetent = -1;
+    }
+
     partial void CalculateTallestDetent(double heightConstraint);
 
     public override SizeRequest Measure(double widthConstraint, double heightConstraint, MeasureFlags flags = MeasureFlags.None)

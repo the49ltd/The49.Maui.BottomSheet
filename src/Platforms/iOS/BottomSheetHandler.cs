@@ -6,6 +6,10 @@ public partial class BottomSheetHandler
     {
         // Leave the background empty, the parent sheet handles the color
     }
+    partial void PlatformUpdateHandleColor(BottomSheet view)
+    {
+        // Not supported on iOS
+    }
 
     partial void Dismiss(BottomSheet view, object request)
     {
