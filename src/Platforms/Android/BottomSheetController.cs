@@ -10,6 +10,7 @@ using AndroidX.AppCompat.App;
 using Google.Android.Material.Internal;
 using Google.Android.Material.Color;
 using Android.Graphics.Drawables;
+using Android.Content;
 
 namespace The49.Maui.BottomSheet;
 
@@ -113,6 +114,8 @@ public class BottomSheetController
         }
     }
 
+    static StayOnFrontView _stayOnFront;
+
     internal IDictionary<Detent, int> _states;
     internal IDictionary<Detent, double> _heights;
     bool _isDuringShowingAnimation = false;
@@ -130,9 +133,6 @@ public class BottomSheetController
     public bool UseNavigationBarArea { get; set; } = false;
 
     int BottomInset => UseNavigationBarArea ? 0 : _windowContainer.RootWindowInsets.StableInsetBottom;
-
-    AWindow Window => ((AppCompatActivity)_mauiContext.Context).Window;
-    ViewGroup ParentView => Window?.DecorView as ViewGroup;
 
     public BottomSheetController(IMauiContext windowMauiContext, BottomSheet sheet)
     {
@@ -255,8 +255,20 @@ public class BottomSheetController
         }
     }
 
+    static void EnsureStayOnFrontView(Context context)
+    {
+        if (_stayOnFront is null)
+        {
+            _stayOnFront = new StayOnFrontView(context);
+            var window = ((AppCompatActivity)context).Window;
+            var parentView = window?.DecorView as ViewGroup;
+            parentView.AddView(_stayOnFront);
+        }
+    }
+
     void EnsureWindowContainer()
     {
+        EnsureStayOnFrontView(_mauiContext.Context);
         if (_windowContainer is null)
         {
             var container = (FrameLayout)AView.Inflate(_mauiContext.Context, Resource.Layout.the49_maui_bottom_sheet_design, null);
@@ -397,7 +409,7 @@ public class BottomSheetController
 
         EnsureWindowContainer();
 
-        ParentView.AddView(_windowContainer);
+        _stayOnFront.AddView(_windowContainer);
 
         _frame.RemoveAllViews();
 

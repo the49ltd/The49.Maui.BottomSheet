@@ -21,35 +21,6 @@ internal class BottomSheetContainer : FrameLayout
         AddView(_contentView);
     }
 
-    protected override void OnAttachedToWindow()
-    {
-        base.OnAttachedToWindow();
-        if (Parent is ViewGroup vg)
-        {
-            vg.ChildViewAdded += ParentChildViewAdded;
-            vg.ChildViewRemoved += ParentChildViewRemoved;
-        }
-    }
-
-    void ParentChildViewAdded(object sender, ViewGroup.ChildViewAddedEventArgs e)
-    {
-        BringToFront();
-    }
-    void ParentChildViewRemoved(object sender, ViewGroup.ChildViewRemovedEventArgs e)
-    {
-        BringToFront();
-    }
-
-    protected override void OnDetachedFromWindow()
-    {
-        base.OnDetachedFromWindow();
-        if (Parent is ViewGroup vg)
-        {
-            vg.ChildViewAdded -= ParentChildViewAdded;
-            vg.ChildViewRemoved -= ParentChildViewRemoved;
-        }
-    }
-
     internal void SetBackdropVisibility(bool hasBackdrop)
     {
         _backdrop.Visibility = hasBackdrop ? ViewStates.Visible : ViewStates.Gone;
