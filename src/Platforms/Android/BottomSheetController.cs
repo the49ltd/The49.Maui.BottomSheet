@@ -56,7 +56,7 @@ public class BottomSheetController
 
         void SetPaddingForPosition(AView bottomSheet)
         {
-            if (bottomSheet.Top < _insetsCompat.SystemWindowInsetTop)
+            if (bottomSheet.Top < _insetsCompat.StableInsetTop)
             {
                 // If the bottomsheet is light, we should set light status bar so the icons are visible
                 // since the bottomsheet is now under the status bar.
@@ -68,7 +68,7 @@ public class BottomSheetController
                 // Smooth transition into status bar when drawing edge to edge.
                 bottomSheet.SetPadding(
                     bottomSheet.PaddingLeft,
-                    _insetsCompat.SystemWindowInsetTop - bottomSheet.Top,
+                    _insetsCompat.StableInsetTop - bottomSheet.Top,
                     bottomSheet.PaddingRight,
                     bottomSheet.PaddingBottom);
             }
