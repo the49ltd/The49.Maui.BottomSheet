@@ -115,7 +115,54 @@ public class BottomSheetController
                 _controller.Layout();
             }
 
+
             return ViewCompat.OnApplyWindowInsets(v, insets);
+        }
+    }
+
+    class BottomSheetInsetsAnimationCallback : WindowInsetsAnimationCompat.Callback
+    {
+        readonly BottomSheetController _controller;
+        int _startHeight;
+        int _endHeight;
+
+        public BottomSheetInsetsAnimationCallback(BottomSheetController controller) : base(DispatchModeStop)
+        {
+            _controller = controller;
+        }
+
+        public override WindowInsetsAnimationCompat.BoundsCompat OnStart(WindowInsetsAnimationCompat animation, WindowInsetsAnimationCompat.BoundsCompat bounds)
+        {
+            var insets = _controller._windowContainer.RootWindowInsets;
+
+            _endHeight = insets.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
+            _controller._frame.TranslationY = _endHeight - _startHeight;
+            return bounds;
+        }
+
+        public override void OnPrepare(WindowInsetsAnimationCompat animation)
+        {
+            var insets = _controller._windowContainer.RootWindowInsets;
+            _startHeight = insets.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
+            base.OnPrepare(animation);
+        }
+
+        public override WindowInsetsCompat OnProgress(WindowInsetsCompat insets, IList<WindowInsetsAnimationCompat> runningAnimations)
+        {
+            WindowInsetsAnimationCompat imeAnimation = null;
+            foreach (var animation in runningAnimations)
+            {
+                if ((animation.TypeMask & WindowInsetsCompat.Type.Ime()) != 0)
+                {
+                    imeAnimation = animation;
+                    break;
+                }
+            }
+            if (imeAnimation != null)
+            {
+                _controller._frame.TranslationY = (_endHeight - _startHeight) * (1 - imeAnimation.InterpolatedFraction);
+            }
+            return insets;
         }
     }
 
@@ -290,6 +337,7 @@ public class BottomSheetController
             _frame.ClipToOutline = true;
 
             ViewCompat.SetOnApplyWindowInsetsListener(_windowContainer, new EdgeToEdgeListener(this));
+            ViewCompat.SetWindowInsetsAnimationCallback(_frame, new BottomSheetInsetsAnimationCallback(this));
 
             _behavior = BottomSheetBehavior.From(_frame);
 
