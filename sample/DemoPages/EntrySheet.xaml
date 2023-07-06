@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<the49:BottomSheet xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:the49="https://schemas.the49.com/dotnet/2023/maui"
+             x:Class="The49.Maui.BottomSheet.Sample.DemoPages.EntrySheet"
+             HasBackdrop="False">
+    <VerticalStackLayout Padding="24, 0">
+        <Label 
+            Text="Type something in here"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
+        <Entry x:Name="Entry" />
+    </VerticalStackLayout>
+</the49:BottomSheet>

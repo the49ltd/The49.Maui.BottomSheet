@@ -123,6 +123,12 @@ public partial class MainPage : ContentPage
             Description = "Check that the content is sized to the sheet",
             Command = new Command(OpenSizingTest),
         },
+        new DemoEntry
+        {
+            Title = "Keyboard layout",
+            Description = "Layout should update with keyboard",
+            Command = new Command(OpenKeyboard),
+        },
 #if ANDROID
         new DemoEntry
         {
@@ -339,6 +345,18 @@ public partial class MainPage : ContentPage
     {
         var t = new SizingTest();
 
+        t.ShowAsync(Window);
+    }
+
+    void OpenKeyboard()
+    {
+        var t = new EntrySheet();
+        t.Detents = new DetentsCollection()
+        {
+            new FullscreenDetent(),
+            new MediumDetent(),
+            new ContentDetent(),
+        };
         t.ShowAsync(Window);
     }
 

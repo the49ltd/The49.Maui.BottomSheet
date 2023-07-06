@@ -28,6 +28,7 @@ public class BottomSheetController
         {
             _controller = controller;
             _insetsCompat = insetsCompat;
+            SetPaddingForPosition(_controller._frame);
         }
 
         public override void OnStateChanged(AView bottomSheet, int p1)
@@ -56,6 +57,7 @@ public class BottomSheetController
 
         void SetPaddingForPosition(AView bottomSheet)
         {
+            var keyboardHeight = _insetsCompat.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
             if (bottomSheet.Top < _insetsCompat.StableInsetTop)
             {
                 // If the bottomsheet is light, we should set light status bar so the icons are visible
@@ -70,7 +72,7 @@ public class BottomSheetController
                     bottomSheet.PaddingLeft,
                     _insetsCompat.StableInsetTop - bottomSheet.Top,
                     bottomSheet.PaddingRight,
-                    bottomSheet.PaddingBottom);
+                    keyboardHeight);
             }
             else if (bottomSheet.Top != 0)
             {
@@ -84,7 +86,7 @@ public class BottomSheetController
                     bottomSheet.PaddingLeft,
                     0,
                     bottomSheet.PaddingRight,
-                    bottomSheet.PaddingBottom);
+                    keyboardHeight);
             }
         }
     }
@@ -108,6 +110,9 @@ public class BottomSheetController
                 _edgeToEdgeCallback = new EdgeToEdgeCallback(_controller, insets);
                 _edgeToEdgeCallback.SetWindow(((AppCompatActivity)_controller._mauiContext.Context).Window);
                 _controller.Behavior.AddBottomSheetCallback(_edgeToEdgeCallback);
+                _controller.CalculateHeights(_controller.GetAvailableHeight());
+                _controller.ResizeVirtualView();
+                _controller.Layout();
             }
 
             return ViewCompat.OnApplyWindowInsets(v, insets);
@@ -318,7 +323,9 @@ public class BottomSheetController
 
         var insets = _windowContainer.RootWindowInsets;
 
-        return (_windowContainer.Height - insets.StableInsetTop - BottomInset) / density;
+        var keyboardHeight = insets.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
+
+        return (_windowContainer.Height - insets.StableInsetTop - BottomInset - keyboardHeight) / density;
     }
 
     internal void LayoutDetents(IDictionary<Detent, double> heights, double maxSheetHeight)
@@ -334,13 +341,14 @@ public class BottomSheetController
         var density = DeviceDisplay.MainDisplayInfo.Density;
         var insets = _windowContainer.RootWindowInsets;
         var topInset = insets.StableInsetTop;
+        var keyboardHeight = insets.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
 
         if (sortedHeights.Count == 1)
         {
             _behavior.FitToContents = true;
             _behavior.SkipCollapsed = true;
             var top = sortedHeights[0].Value;
-            _frame.LayoutParameters.Height = (int)(top * density) + BottomInset;
+            _frame.LayoutParameters.Height = (int)(top * density) + BottomInset + keyboardHeight;
             if (top == maxSheetHeight)
             {
                 _frame.LayoutParameters.Height += topInset;
@@ -351,7 +359,7 @@ public class BottomSheetController
             _behavior.FitToContents = true;
             _behavior.SkipCollapsed = false;
             var top = sortedHeights[0].Value;
-            _frame.LayoutParameters.Height = (int)(top * density) + BottomInset;
+            _frame.LayoutParameters.Height = (int)(top * density) + BottomInset + keyboardHeight;
 
             if (top == maxSheetHeight)
             {
@@ -360,7 +368,7 @@ public class BottomSheetController
 
             var bottom = sortedHeights[1].Value;
 
-            _behavior.PeekHeight = (int)(bottom * density);
+            _behavior.PeekHeight = (int)(bottom * density) + BottomInset + keyboardHeight;
         }
         else if (sortedHeights.Count == 3)
         {
@@ -370,7 +378,7 @@ public class BottomSheetController
             var midway = sortedHeights[1].Value;
             var bottom = sortedHeights[2].Value;
 
-            _frame.LayoutParameters.Height = (int)(top * density) + BottomInset;
+            _frame.LayoutParameters.Height = (int)(top * density) + BottomInset + keyboardHeight;
 
             if (top == maxSheetHeight)
             {
@@ -379,14 +387,14 @@ public class BottomSheetController
 
             // Set the top detent by offsetting the requested height from the maxHeight
             var topOffset = (maxSheetHeight - top) * density;
-            _behavior.ExpandedOffset = (int)topOffset;
+            _behavior.ExpandedOffset = Math.Max(0, (int)topOffset);
 
             // Set the midway detent by calculating the ratio using the top detent info
-            var ratio = (midway * density) / _frame.LayoutParameters.Height;
+            var ratio = ((midway * density) + keyboardHeight + BottomInset) / (_frame.LayoutParameters.Height);
             _behavior.HalfExpandedRatio = (float)ratio;
 
             // Set the bottom detent using the peekHeight
-            _behavior.PeekHeight = (int)(bottom * density);
+            _behavior.PeekHeight = (int)(bottom * density) + BottomInset + keyboardHeight;
         }
 
         _frame.RequestLayout();

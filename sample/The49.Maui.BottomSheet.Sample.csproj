@@ -58,6 +58,7 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="5.1.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+		<PackageReference Include="The49.Maui.Insets" Version="1.0.0-alpha6" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -71,6 +72,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="DemoPages\EntrySheet.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="DemoPages\SizingTest.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
