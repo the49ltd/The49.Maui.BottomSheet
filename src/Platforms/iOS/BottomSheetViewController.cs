@@ -42,6 +42,14 @@ public class BottomSheetViewController : UIViewController
         UpdateBackground();
         _sheet.NotifyShowing();
     }
+    public void Layout()
+    {
+        _sheet.CachedDetents.Clear();
+        if (OperatingSystem.IsIOSVersionAtLeast(16))
+        {
+            SheetPresentationController.InvalidateDetents();
+        }
+    }
     internal void UpdateBackground()
     {
         if (_sheet?.BackgroundBrush != null)
@@ -60,10 +68,7 @@ public class BottomSheetViewController : UIViewController
     public override void ViewDidLayoutSubviews()
     {
         base.ViewDidLayoutSubviews();
-        if (OperatingSystem.IsIOSVersionAtLeast(16))
-        {
-            SheetPresentationController.InvalidateDetents();
-        }
+        Layout();
     }
 
     [SupportedOSPlatform("ios15.0")]

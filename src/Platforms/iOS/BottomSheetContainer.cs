@@ -5,20 +5,21 @@ namespace The49.Maui.BottomSheet;
 
 internal class BottomSheetContainer : UIView
 {
-    BottomSheet _page;
+    BottomSheet _sheet;
     UIView _view;
 
-    internal BottomSheetContainer(BottomSheet page, UIView view)
+    internal BottomSheetContainer(BottomSheet sheet, UIView view)
     {
-        _page = page;
+        _sheet = sheet;
         _view = view;
         AddSubview(_view);
     }
     public override void LayoutSubviews()
     {
         base.LayoutSubviews();
-        var r = _page.Measure(_page.Window.Width, _page.Window.Height);
+        var r = _sheet.Measure(_sheet.Window.Width, _sheet.Window.Height);
         _view.Frame = new CGRect(0, 0, Bounds.Width, r.Request.Height);
+        _sheet.Controller.Layout();
     }
 }
 

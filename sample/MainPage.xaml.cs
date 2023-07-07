@@ -83,6 +83,12 @@ public partial class MainPage : ContentPage
         },
         new DemoEntry
         {
+            Title = "Text sizing",
+            Description = "Text should take as much space as it needs",
+            Command = new Command(OpenTextSizing),
+        },
+        new DemoEntry
+        {
             Title = "With ScrollView",
             Description = "Let the sheet expand, then scroll",
             Command = new Command(OpenScrollView),
@@ -242,6 +248,13 @@ public partial class MainPage : ContentPage
             new HeightDetent() { Height = 240 },
         };
         page.ShowAsync(Window);
+    }
+
+    void OpenTextSizing()
+    {
+        var p = new TextSheet();
+
+        p.ShowAsync(Window);
     }
 
     void OpenDismissed()
