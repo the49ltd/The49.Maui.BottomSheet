@@ -8,7 +8,7 @@ public partial class ContentDetent : Detent
         {
             return maxSheetHeight;
         }
-        var r = page.Content.Measure(page.Window.Width, maxSheetHeight);
+        var r = page.Content.Measure(page.Window.Width - page.Padding.HorizontalThickness, maxSheetHeight);
 
         return r.Request.Height + page.Padding.VerticalThickness;
     }

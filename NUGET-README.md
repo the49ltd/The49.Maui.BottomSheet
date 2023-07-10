@@ -39,12 +39,12 @@ xmlns:the49="https://schemas.the49.com/dotnet/2023/maui"
 
 ## Quick usage
 
-Simply create a `ContentPage`. Replace the extended class with `BottomSheetPage` in code-behind and in XAML:
+Simply create a `ContentView`. Replace the extended class with `BottomSheet` in code-behind and in XAML:
 
 ```cs
 using The49.Maui.BottomSheet;
 
-public class MySheetPage : BottomSheetPage
+public class MySheet : BottomSheet
 {
     public MySheetPage()
     {
@@ -58,23 +58,26 @@ public class MySheetPage : BottomSheetPage
 <the49:BottomSheet xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:the49="https://schemas.the49.com/dotnet/2023/maui"
-             x:Class="MyApp.MySheetPage"
-             Title="MySheetPage">
+             x:Class="MyApp.MySheet"
+             Title="MySheet">
             <!-- ... -->
 </the49:BottomSheet>
 ```
 
-The sheet can be opened by calling the `ShowAsync(Window)` method of the page. It can be closed using `DismissAsync()`:
+The sheet can be opened by calling the `ShowAsync()` method of the page. It can be closed using `DismissAsync()`:
 
 ```cs
 
-const page = new MySheetPage();
+const sheet = new MySheet();
 
-// Pass the window in which the sheet should show. Usually accessible from any other page of the app.
-page.ShowAsync(Window);
+// Show the sheet
+sheet.ShowAsync();
+
+// Alternatively, pass the window in which the sheet should show. Usually accessible from any other page of the app.
+sheet.ShowAsync(Window);
 
 // Call to programatically close the sheet
-page.DismissAsync();
+sheet.DismissAsync();
 
 ```
 
@@ -93,7 +96,7 @@ If you already have this file, just make sure the `Maui.MainTheme` style inherit
 
 # API
 
-This library offers a `BottomSheetPage`, an extension of the `ContentView` with extra functionality
+This library offers a `BottomSheet`, an extension of the `ContentView` with extra functionality
 
 ## Properties
 

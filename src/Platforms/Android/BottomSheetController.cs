@@ -126,6 +126,16 @@ public class BottomSheetController
         int _startHeight;
         int _endHeight;
 
+        WindowInsetsCompat GetInsets()
+        {
+            if (!OperatingSystem.IsAndroidVersionAtLeast(23))
+            {
+                return new WindowInsetsCompat.Builder().Build();
+            }
+
+            return WindowInsetsCompat.ToWindowInsetsCompat(_controller._windowContainer.RootWindowInsets);
+        }
+
         public BottomSheetInsetsAnimationCallback(BottomSheetController controller) : base(DispatchModeStop)
         {
             _controller = controller;
@@ -133,7 +143,7 @@ public class BottomSheetController
 
         public override WindowInsetsAnimationCompat.BoundsCompat OnStart(WindowInsetsAnimationCompat animation, WindowInsetsAnimationCompat.BoundsCompat bounds)
         {
-            var insets = _controller._windowContainer.RootWindowInsets;
+            var insets = GetInsets();
 
             _endHeight = insets.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
             _controller._frame.TranslationY = _endHeight - _startHeight;
@@ -142,7 +152,7 @@ public class BottomSheetController
 
         public override void OnPrepare(WindowInsetsAnimationCompat animation)
         {
-            var insets = _controller._windowContainer.RootWindowInsets;
+            var insets = GetInsets();
             _startHeight = insets.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
             base.OnPrepare(animation);
         }
@@ -391,72 +401,95 @@ public class BottomSheetController
         var topInset = insets.StableInsetTop;
         var keyboardHeight = insets.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
 
+        var top = sortedHeights[0].Value;
+
+        // Configure the sheet to handle up to 3 detents
+
         if (sortedHeights.Count == 1)
-        {
+        { // Only way to have one detent on Android is to use fitToContent. Use that
             _behavior.FitToContents = true;
             _behavior.SkipCollapsed = true;
-            var top = sortedHeights[0].Value;
-            _frame.LayoutParameters.Height = (int)(top * density) + BottomInset + keyboardHeight;
-            if (top == maxSheetHeight)
-            {
-                _frame.LayoutParameters.Height += topInset;
-            }
         }
         else if (sortedHeights.Count == 2)
-        {
+        { // We can handle a second detent by adding a collapsed state. Use peek height
             _behavior.FitToContents = true;
             _behavior.SkipCollapsed = false;
-            var top = sortedHeights[0].Value;
-            _frame.LayoutParameters.Height = (int)(top * density) + BottomInset + keyboardHeight;
-
-            if (top == maxSheetHeight)
-            {
-                _frame.LayoutParameters.Height += topInset;
-            }
 
             var bottom = sortedHeights[1].Value;
 
             _behavior.PeekHeight = (int)(bottom * density) + BottomInset + keyboardHeight;
         }
         else if (sortedHeights.Count == 3)
-        {
+        { // 3 detents can be done using the peek height AND disabling fitToContent
+          // Doing so uses a property called halfExpandedRatio, giving us
+          // Expanded: Use ExpandedOffset to offset from the top
+          // HalfExpanded: Use HalfExpandedRatio
+          // Collapsed: Use PeekHeight
+
             _behavior.FitToContents = false;
             _behavior.SkipCollapsed = false;
-            var top = sortedHeights[0].Value;
+
             var midway = sortedHeights[1].Value;
             var bottom = sortedHeights[2].Value;
-
-            _frame.LayoutParameters.Height = (int)(top * density) + BottomInset + keyboardHeight;
-
-            if (top == maxSheetHeight)
-            {
-                _frame.LayoutParameters.Height += topInset;
-            }
 
             // Set the top detent by offsetting the requested height from the maxHeight
             var topOffset = (maxSheetHeight - top) * density;
             _behavior.ExpandedOffset = Math.Max(0, (int)topOffset);
 
             // Set the midway detent by calculating the ratio using the top detent info
-            var ratio = ((midway * density) + keyboardHeight + BottomInset) / (_frame.LayoutParameters.Height);
+            var ratio = ((midway * density) + keyboardHeight + BottomInset) / _frame.LayoutParameters.Height;
             _behavior.HalfExpandedRatio = (float)ratio;
 
             // Set the bottom detent using the peekHeight
             _behavior.PeekHeight = (int)(bottom * density) + BottomInset + keyboardHeight;
         }
+    }
 
-        _frame.RequestLayout();
+    double CalculateTallestDetent(double heightConstraint)
+    {
+        if (_heights is null)
+        {
+            CalculateHeights(heightConstraint);
+        }
+        return _heights.Values.Max();
     }
 
     void ResizeVirtualView()
     {
         var pv = (ContentViewGroup)_sheet.Handler?.PlatformView;
-        var h = GetAvailableHeight();
-        _sheet.InvalidateTallestDetent();
-        var r = _sheet.Measure(_sheet.Window.Width, h);
-        pv.LayoutParameters.Width = ViewGroup.LayoutParams.MatchParent;
-        pv.LayoutParameters.Height = (int)Math.Round(r.Request.Height * DeviceDisplay.MainDisplayInfo.Density);
-        pv.RequestLayout();
+        var maxHeight = GetAvailableHeight();
+        var height = CalculateTallestDetent(maxHeight);
+
+        double density = DeviceDisplay.MainDisplayInfo.Density;
+
+        var platformHeight = (int)Math.Round(height * density);
+
+        pv.LayoutParameters = new FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MatchParent,
+            platformHeight
+        );
+
+        int keyboardHeight = 0;
+        int topInset = 0;
+
+        if (OperatingSystem.IsAndroidVersionAtLeast(23))
+        {
+            var insets = _windowContainer.RootWindowInsets;
+            var compat = WindowInsetsCompat.ToWindowInsetsCompat(insets);
+            keyboardHeight = compat.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
+            topInset = compat.StableInsetTop;
+        }
+
+        var layoutParams = _frame.LayoutParameters;
+
+        layoutParams.Height = platformHeight + BottomInset + keyboardHeight;
+
+        if (height == maxHeight)
+        {
+            layoutParams.Height += topInset;
+        }
+        _sheet.Arrange(new Rect(0, 0, _frame.Width / density, height));
+        _frame.RequestLayout();
     }
 
     public void Show(bool animated)
@@ -471,15 +504,19 @@ public class BottomSheetController
 
         // The Android view for the page could already have a ContainerView as a parent if it was shown as a bottom sheet before
         ((ContentViewGroup)_sheet.Handler?.PlatformView)?.RemoveFromParent();
-        var containerView = _sheet.ToContainerView(_mauiContext);
+        var containerView = _sheet.ToPlatform(_mauiContext);
+
+        var c = new FrameLayout(_mauiContext.Context);
 
         if (_sheet.HasHandle)
         {
             _handle = new BottomSheetDragHandleView(_mauiContext.Context);
-            _frame.AddView(_handle, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent));
+            c.AddView(_handle, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent));
         }
 
-        _frame.AddView(containerView);
+        c.AddView(containerView);
+
+        _frame.AddView(c);
 
         UpdateBackground();
         UpdateHasBackdrop();
@@ -495,7 +532,6 @@ public class BottomSheetController
         {
             ResizeVirtualView();
 
-            _frame.LayoutChange += OnLayoutChange;
             CalculateHeights(GetAvailableHeight());
             CalculateStates();
             Layout();
@@ -510,6 +546,8 @@ public class BottomSheetController
 
             Behavior.State = state;
 
+            c.LayoutChange += OnLayoutChange;
+
             _sheet.NotifyShowing();
         });
     }
@@ -518,6 +556,7 @@ public class BottomSheetController
     {
         CalculateHeights(GetAvailableHeight());
         CalculateStates();
+        ResizeVirtualView();
         Layout();
     }
 

@@ -1,6 +1,4 @@
-﻿using Microsoft.Maui.Controls;
-
-namespace The49.Maui.BottomSheet;
+﻿namespace The49.Maui.BottomSheet;
 
 public enum DismissOrigin
 {
@@ -69,25 +67,10 @@ public partial class BottomSheet : ContentView
         Resources.Add(new Style(typeof(Label)));
     }
 
-    double _tallestDetent = -1;
-
-    internal void InvalidateTallestDetent()
+    public Task ShowAsync(bool animated = true)
     {
-        _tallestDetent = -1;
-    }
-
-    partial void CalculateTallestDetent(double heightConstraint);
-
-    public override SizeRequest Measure(double widthConstraint, double heightConstraint, MeasureFlags flags = MeasureFlags.None)
-    {
-        if (_tallestDetent == -1)
-        {
-            CalculateTallestDetent(heightConstraint);
-        }
-        return new SizeRequest(
-            new Size(widthConstraint, _tallestDetent == -1 ? heightConstraint : _tallestDetent),
-            new Size(widthConstraint, _tallestDetent == -1 ? heightConstraint : _tallestDetent)
-        );
+        var window = Application.Current.Windows[0];
+        return ShowAsync(window, animated);
     }
 
     public Task ShowAsync(Window window, bool animated = true)
