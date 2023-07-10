@@ -4,13 +4,13 @@
              xmlns:the49="https://schemas.the49.com/dotnet/2023/maui"
              x:Class="The49.Maui.BottomSheet.Sample.DemoPages.TextSheet"
              HasHandle="True"
-             Padding="16">
-    <VerticalStackLayout Spacing="18">
+             Padding="32, 32, 32, 40">
+    <VerticalStackLayout Spacing="18" Background="Red">
         <Label 
             Text="Double trouble"
             FontSize="18"
             HorizontalOptions="Center" />
-         <Label FontSize="16"
+         <Label FontSize="15"
                 x:Name="text"
             Text="Clicking on the button will definitely change the text"
             HorizontalOptions="Center" />

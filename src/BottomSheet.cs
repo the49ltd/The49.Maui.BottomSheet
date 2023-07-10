@@ -1,6 +1,4 @@
-﻿using Microsoft.Maui.Controls;
-
-namespace The49.Maui.BottomSheet;
+﻿namespace The49.Maui.BottomSheet;
 
 public enum DismissOrigin
 {
@@ -88,6 +86,12 @@ public partial class BottomSheet : ContentView
             new Size(widthConstraint, _tallestDetent == -1 ? heightConstraint : _tallestDetent),
             new Size(widthConstraint, _tallestDetent == -1 ? heightConstraint : _tallestDetent)
         );
+    }
+
+    public Task ShowAsync(bool animated = true)
+    {
+        var window = Application.Current.Windows[0];
+        return ShowAsync(window, animated);
     }
 
     public Task ShowAsync(Window window, bool animated = true)
