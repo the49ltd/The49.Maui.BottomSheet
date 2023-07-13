@@ -11,6 +11,7 @@ using Google.Android.Material.Internal;
 using Google.Android.Material.Color;
 using Android.Graphics.Drawables;
 using Android.Content;
+using Insets = AndroidX.Core.Graphics.Insets;
 
 namespace The49.Maui.BottomSheet;
 
@@ -55,10 +56,24 @@ public class BottomSheetController
             }
         }
 
+        int TopInset
+        {
+            get
+            {
+                if (OperatingSystem.IsAndroidVersionAtLeast(30))
+                {
+                    return _insetsCompat.GetInsetsIgnoringVisibility(Android.Views.WindowInsets.Type.SystemBars()).Top;
+                }
+#pragma warning disable CS0618
+                return _insetsCompat.StableInsetTop;
+#pragma warning restore CS0618
+            }
+        }
+
         void SetPaddingForPosition(AView bottomSheet)
         {
             var keyboardHeight = _insetsCompat.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
-            if (bottomSheet.Top < _insetsCompat.StableInsetTop)
+            if (bottomSheet.Top < TopInset)
             {
                 // If the bottomsheet is light, we should set light status bar so the icons are visible
                 // since the bottomsheet is now under the status bar.
@@ -70,7 +85,7 @@ public class BottomSheetController
                 // Smooth transition into status bar when drawing edge to edge.
                 bottomSheet.SetPadding(
                     bottomSheet.PaddingLeft,
-                    _insetsCompat.StableInsetTop - bottomSheet.Top,
+                    TopInset - bottomSheet.Top,
                     bottomSheet.PaddingRight,
                     keyboardHeight);
             }
@@ -126,16 +141,6 @@ public class BottomSheetController
         int _startHeight;
         int _endHeight;
 
-        WindowInsetsCompat GetInsets()
-        {
-            if (!OperatingSystem.IsAndroidVersionAtLeast(23))
-            {
-                return new WindowInsetsCompat.Builder().Build();
-            }
-
-            return WindowInsetsCompat.ToWindowInsetsCompat(_controller._windowContainer.RootWindowInsets);
-        }
-
         public BottomSheetInsetsAnimationCallback(BottomSheetController controller) : base(DispatchModeStop)
         {
             _controller = controller;
@@ -143,17 +148,14 @@ public class BottomSheetController
 
         public override WindowInsetsAnimationCompat.BoundsCompat OnStart(WindowInsetsAnimationCompat animation, WindowInsetsAnimationCompat.BoundsCompat bounds)
         {
-            var insets = GetInsets();
-
-            _endHeight = insets.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
+            _endHeight = _controller.WindowInsets.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
             _controller._frame.TranslationY = _endHeight - _startHeight;
             return bounds;
         }
 
         public override void OnPrepare(WindowInsetsAnimationCompat animation)
         {
-            var insets = GetInsets();
-            _startHeight = insets.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
+            _startHeight = _controller.WindowInsets.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
             base.OnPrepare(animation);
         }
 
@@ -194,7 +196,7 @@ public class BottomSheetController
 
     public bool UseNavigationBarArea { get; set; } = false;
 
-    int BottomInset => UseNavigationBarArea ? 0 : _windowContainer.RootWindowInsets.StableInsetBottom;
+    int BottomInset => UseNavigationBarArea ? 0 : Insets.Bottom;
 
     public BottomSheetController(IMauiContext windowMauiContext, BottomSheet sheet)
     {
@@ -375,15 +377,42 @@ public class BottomSheetController
         }
     }
 
+    WindowInsetsCompat WindowInsets
+    {
+        get
+        {
+            if (OperatingSystem.IsAndroidVersionAtLeast(23))
+            {
+                return WindowInsetsCompat.ToWindowInsetsCompat(_windowContainer.RootWindowInsets);
+            }
+
+            return WindowInsetsCompat.Consumed;
+        }
+    }
+
+    Insets Insets
+    {
+        get
+        {
+            var insets = WindowInsets;
+            if (OperatingSystem.IsAndroidVersionAtLeast(30))
+            {
+                return insets.GetInsetsIgnoringVisibility(Android.Views.WindowInsets.Type.SystemBars());
+            }
+#pragma warning disable CS0618
+            return Insets.Of(insets.StableInsetLeft, insets.StableInsetTop, insets.StableInsetRight, insets.StableInsetBottom);
+#pragma warning restore CS0618
+        }
+    }
+
+    int KeyboardHeight => WindowInsets.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
+    int TopInset => Insets.Top;
+
     public double GetAvailableHeight()
     {
         var density = DeviceDisplay.MainDisplayInfo.Density;
 
-        var insets = _windowContainer.RootWindowInsets;
-
-        var keyboardHeight = insets.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
-
-        return (_windowContainer.Height - insets.StableInsetTop - BottomInset - keyboardHeight) / density;
+        return (_windowContainer.Height - TopInset - BottomInset - KeyboardHeight) / density;
     }
 
     internal void LayoutDetents(IDictionary<Detent, double> heights, double maxSheetHeight)
@@ -397,9 +426,8 @@ public class BottomSheetController
             .OrderByDescending(i => i.Value)
             .ToList();
         var density = DeviceDisplay.MainDisplayInfo.Density;
-        var insets = _windowContainer.RootWindowInsets;
-        var topInset = insets.StableInsetTop;
-        var keyboardHeight = insets.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
+
+        var keyboardHeight = KeyboardHeight;
 
         var top = sortedHeights[0].Value;
 
@@ -469,27 +497,15 @@ public class BottomSheetController
             platformHeight
         );
 
-        int keyboardHeight = 0;
-        int topInset = 0;
-
-        if (OperatingSystem.IsAndroidVersionAtLeast(23))
-        {
-            var insets = _windowContainer.RootWindowInsets;
-            var compat = WindowInsetsCompat.ToWindowInsetsCompat(insets);
-            keyboardHeight = compat.GetInsets(WindowInsetsCompat.Type.Ime()).Bottom;
-            topInset = compat.StableInsetTop;
-        }
-
         var layoutParams = _frame.LayoutParameters;
 
-        layoutParams.Height = platformHeight + BottomInset + keyboardHeight;
+        layoutParams.Height = platformHeight + BottomInset + KeyboardHeight;
 
         if (height == maxHeight)
         {
-            layoutParams.Height += topInset;
+            layoutParams.Height += TopInset;
         }
         _sheet.Arrange(new Rect(0, 0, _frame.Width / density, height));
-        _frame.RequestLayout();
     }
 
     public void Show(bool animated)

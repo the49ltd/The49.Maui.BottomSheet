@@ -1,4 +1,5 @@
-﻿using Microsoft.Maui.Handlers;
+﻿#nullable enable
+using Microsoft.Maui.Handlers;
 
 #if IOS
 using PlatformView = UIKit.UIView;
@@ -38,9 +39,9 @@ public partial class BottomSheetHandler : ContentViewHandler
             [nameof(BottomSheet.DismissAsync)] = MapDismiss,
         };
 
-    static void MapDismiss(BottomSheetHandler handler, BottomSheet view, object request)
+    static void MapDismiss(BottomSheetHandler handler, BottomSheet view, object? request)
     {
-        handler.Dismiss(view, request);
+        handler.Dismiss(view, request ?? false);
     }
 
     public static void MapSelectedDetent(BottomSheetHandler handler, BottomSheet view)
@@ -73,7 +74,7 @@ public partial class BottomSheetHandler : ContentViewHandler
     {
     }
 
-    new BottomSheet VirtualView { get; }
-    new PlatformView PlatformView { get; }
+    new BottomSheet? VirtualView { get; }
+    new PlatformView? PlatformView { get; }
 
 }

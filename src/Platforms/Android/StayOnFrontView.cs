@@ -7,13 +7,7 @@ namespace The49.Maui.BottomSheet;
 
 internal class StayOnFrontView : FrameLayout
 {
-    AView _contentView;
-    public AView ContentView => _contentView;
-
-    public StayOnFrontView(Context context) : base(context)
-    {
-
-    }
+    public StayOnFrontView(Context context) : base(context) {}
 
     protected override void OnAttachedToWindow()
     {
