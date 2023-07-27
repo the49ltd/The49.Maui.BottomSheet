@@ -324,8 +324,8 @@ If you're coming from [Gerald Versluis' video](https://www.youtube.com/watch?v=J
    - `HandleColor`
    - `SelectedDetent`
  - Methods have been renamed
-   - `Show` is now `ShowAync` and completes when the animation of the sheet finishes. It also accepts a boolean to turn off animations
-   - `Dismiss` is now `DismissAync` and completes when the animation of the sheet finishes. It also accepts a boolean to turn off animations
+   - `Show` is now `ShowAsync` and completes when the animation of the sheet finishes. It also accepts a boolean to turn off animations
+   - `Dismiss` is now `DismissAsync` and completes when the animation of the sheet finishes. It also accepts a boolean to turn off animations
 
 
 ---
