@@ -10,6 +10,6 @@ public partial class ContentDetent : Detent
         }
         var r = page.Content.Measure(page.Window.Width - page.Padding.HorizontalThickness, maxSheetHeight);
 
-        return r.Request.Height + page.Padding.VerticalThickness;
+        return Math.Min(maxSheetHeight, r.Request.Height + page.Padding.VerticalThickness);
     }
 }

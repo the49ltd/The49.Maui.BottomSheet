@@ -1,4 +1,4 @@
-﻿using The49.Maui.BottomSheet.Sample. DemoPages;
+﻿using The49.Maui.BottomSheet.Sample.DemoPages;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
@@ -21,6 +21,18 @@ public partial class MainPage : ContentPage
     }
 
     public ObservableCollection<DemoEntry> Demos => new ObservableCollection<DemoEntry> {
+        new DemoEntry
+        {
+            Title = "Chat demo",
+            Description = "Use a sheet for a chat editor",
+            Command = new Command(OpenChat),
+        },
+        new DemoEntry
+        {
+            Title = "Entry",
+            Description = "Display any page as a bottom sheet",
+            Command = new Command(OpenEntrySheet),
+        },
         new DemoEntry
         {
             Title = "Non-modal sheet",
@@ -208,6 +220,27 @@ public partial class MainPage : ContentPage
         };
         page.ShowAsync(Window);
     }
+    async void OpenEntrySheet()
+    {
+        var e = new Editor { AutoSize = EditorAutoSizeOption.TextChanges };
+        var l = new Label { Text = "bounds" };
+        Grid.SetRow(l, 1);
+
+        var g = new Grid
+            {
+                e,
+                l,
+            };
+
+        g.RowDefinitions = new RowDefinitionCollection { new RowDefinition { Height = GridLength.Star }, new RowDefinition { Height = GridLength.Auto } };
+
+        var sheet = new BottomSheet
+        {
+            Content = g
+        };
+
+        await sheet.ShowAsync();
+    }
     private void OpenFullscreenSheet()
     {
         var page = new SimplePage();
@@ -336,7 +369,8 @@ public partial class MainPage : ContentPage
             new ContentDetent(),
         };
         page.HasBackdrop = true;
-        var b = new Button {
+        var b = new Button
+        {
             Text = "Go to page"
         };
 
@@ -371,6 +405,11 @@ public partial class MainPage : ContentPage
             new ContentDetent(),
         };
         t.ShowAsync(Window);
+    }
+
+    void OpenChat()
+    {
+        Shell.Current.Navigation.PushAsync(new ChatPage());
     }
 
 #if ANDROID

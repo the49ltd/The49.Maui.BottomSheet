@@ -9,8 +9,6 @@ internal class BottomSheetContainer : UIView
     BottomSheet _sheet;
     UIView _view;
 
-    double _maximumDetentValue = -1;
-
     // Can't get the sheet max height with large and medium detents
     // custom detents are not supported on iOS 15
     // can't use largestUndimmedIdentifier or selected detent with custom detents on iOS 16
@@ -22,13 +20,11 @@ internal class BottomSheetContainer : UIView
 
     double CalculateTallestDetent(double heightConstraint)
     {
-        if (_maximumDetentValue == -1)
-        {
-            var window = UIApplication.SharedApplication.KeyWindow;
-            var topPadding = window?.SafeAreaInsets.Top ?? 0;
-            _maximumDetentValue = heightConstraint - topPadding - SheetTopSpacing;
-        }
-        return _sheet.GetEnabledDetents().Select(d => d.GetHeight(_sheet, _maximumDetentValue)).Max();
+        var window = UIApplication.SharedApplication.KeyWindow;
+        var topPadding = window?.SafeAreaInsets.Top ?? 0;
+        var maximumDetentValue = heightConstraint - topPadding - SheetTopSpacing;
+        
+        return _sheet.GetEnabledDetents().Select(d => d.GetHeight(_sheet, maximumDetentValue)).Max();
     }
 
     internal BottomSheetContainer(BottomSheet sheet, UIView view)
@@ -40,7 +36,7 @@ internal class BottomSheetContainer : UIView
     public override void LayoutSubviews()
     {
         base.LayoutSubviews();
-        var h = CalculateTallestDetent(_sheet.Window.Height);
+        var h = CalculateTallestDetent(_sheet.Window.Height - BottomSheetManager.KeyboardHeight);
         _view.Frame = new CGRect(0, 0, Bounds.Width, h);
         _sheet.Arrange(_view.Frame.ToRectangle());
         _sheet.Controller.Layout();

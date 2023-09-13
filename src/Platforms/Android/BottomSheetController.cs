@@ -562,7 +562,7 @@ public class BottomSheetController
 
             Behavior.State = state;
 
-            c.LayoutChange += OnLayoutChange;
+            containerView.LayoutChange += OnLayoutChange;
 
             _sheet.NotifyShowing();
         });

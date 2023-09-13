@@ -1,13 +1,28 @@
-﻿using UIKit;
+﻿using Foundation;
+using System.Runtime.InteropServices;
+using UIKit;
 namespace The49.Maui.BottomSheet;
 
 internal partial class BottomSheetManager
 {
+    static NSObject _keyboardWillShowObserver;
+    private static nfloat _keyboardHeight;
+    private static object _keyboardDidHideObserver;
+
     static partial void PlatformShow(Window window, BottomSheet sheet, bool animated)
     {
         sheet.Parent = window;
         var controller = new BottomSheetViewController(window.Handler.MauiContext, sheet);
         sheet.Controller = controller;
+
+        if (_keyboardWillShowObserver is null)
+        {
+            _keyboardWillShowObserver = UIKeyboard.Notifications.ObserveWillShow(KeyboardWillShow);
+        }
+        if (_keyboardDidHideObserver is null)
+        {
+            _keyboardDidHideObserver = UIKeyboard.Notifications.ObserveDidHide(KeyboardDidHide);
+        }
 
         if (OperatingSystem.IsIOSVersionAtLeast(15))
         {
@@ -46,7 +61,7 @@ internal partial class BottomSheetManager
                     {
                         if (!sheet.CachedDetents.ContainsKey(index))
                         {
-                            sheet.CachedDetents.Add(index, (float)d.GetHeight(sheet, context.MaximumDetentValue));
+                            sheet.CachedDetents.Add(index, (float)d.GetHeight(sheet, context.MaximumDetentValue - _keyboardHeight));
                         }
                         return sheet.CachedDetents[index];
                     });
@@ -79,5 +94,17 @@ internal partial class BottomSheetManager
 
         parent.PresentViewController(controller, animated, sheet.NotifyShown);
     }
+
+    static void KeyboardDidHide(object sender, UIKeyboardEventArgs e)
+    {
+        _keyboardHeight = 0;
+    }
+
+    static void KeyboardWillShow(object sender, UIKeyboardEventArgs e)
+    {
+        _keyboardHeight = e.FrameEnd.Height;
+    }
+
+    internal static NFloat KeyboardHeight => _keyboardHeight;
 }
 
