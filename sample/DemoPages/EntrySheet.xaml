@@ -4,11 +4,19 @@
              xmlns:the49="https://schemas.the49.com/dotnet/2023/maui"
              x:Class="The49.Maui.BottomSheet.Sample.DemoPages.EntrySheet"
              HasBackdrop="False">
-    <VerticalStackLayout Padding="24, 0">
-        <Label 
-            Text="Type something in here"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-        <Entry x:Name="Entry" />
-    </VerticalStackLayout>
+    <Grid RowDefinitions="*">
+        <ScrollView>
+            <Grid RowDefinitions="Auto, *, Auto" Padding="24, 0">
+                <Label 
+                    Text="Type something in here"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center" />
+                <Editor x:Name="Entry" Grid.Row="1" AutoSize="TextChanges" />
+                <Label Grid.Row="2"
+                    Text="Type something in here"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center" />
+            </Grid>
+        </ScrollView>
+    </Grid>
 </the49:BottomSheet>

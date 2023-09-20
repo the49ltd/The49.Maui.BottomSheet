@@ -222,22 +222,7 @@ public partial class MainPage : ContentPage
     }
     async void OpenEntrySheet()
     {
-        var e = new Editor { AutoSize = EditorAutoSizeOption.TextChanges };
-        var l = new Label { Text = "bounds" };
-        Grid.SetRow(l, 1);
-
-        var g = new Grid
-            {
-                e,
-                l,
-            };
-
-        g.RowDefinitions = new RowDefinitionCollection { new RowDefinition { Height = GridLength.Star }, new RowDefinition { Height = GridLength.Auto } };
-
-        var sheet = new BottomSheet
-        {
-            Content = g
-        };
+        var sheet = new EntrySheet();
 
         await sheet.ShowAsync();
     }

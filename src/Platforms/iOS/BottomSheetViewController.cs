@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Versioning;
+using Foundation;
 using Microsoft.Maui.Platform;
 using UIKit;
 
@@ -8,6 +9,7 @@ public class BottomSheetViewController : UIViewController
 {
     IMauiContext _windowMauiContext;
     BottomSheet _sheet;
+    NSObject? _keyboardDidHideObserver;
 
     public BottomSheetViewController(IMauiContext windowMauiContext, BottomSheet sheet) : base()
     {
@@ -41,7 +43,18 @@ public class BottomSheetViewController : UIViewController
 
         UpdateBackground();
         _sheet.NotifyShowing();
+
+        if (_keyboardDidHideObserver is null)
+        {
+            _keyboardDidHideObserver = UIKeyboard.Notifications.ObserveDidHide(KeyboardDidHide);
+        }
     }
+
+    void KeyboardDidHide(object sender, UIKeyboardEventArgs e)
+    {
+        Layout();
+    }
+
     public void Layout()
     {
         _sheet.CachedDetents.Clear();
