@@ -114,6 +114,7 @@ Name          |  Type | Default value | Description | Android | iOS |
 `HasBackdrop` | `bool` | `false` | Displays the sheet as modal. This has no effect on whether or not the sheet can be dismissed using gestures. | ✅ | ✅* |
 `HasHandle` | `bool` | `false` | If `true`, display a drag handle at the top of the sheet | ✅ | ✅ |
 `HandleColor` | `Color` | `null` | Sets the color of the sheet's handle is `HasHandle` is true | ✅ | ❌** |
+`CornerRadius` | `double` | `-1` | Sets the sheet's corner radius | ✅*** | ✅ |
 `IsCancelable` | `bool` | `true` | If `false`, prevents the dismissal of the sheet with user gestures | ✅ | ✅ |
 `Detents` | `DetentsCollection` | `new DetentsCollection() { new ContentDetent() })` | A collection of detents where the sheet will snap to when dragged. (See the Detents section for more info) | ✅ | ✅ |
 `SelectedDetent` | `Detent` | `null` | A two way property defining which detent is currently selected. Changes as the user slides, and updates the sheet's position when changed | ✅ | ✅* |
@@ -122,6 +123,8 @@ Name          |  Type | Default value | Description | Android | iOS |
 Only when the `FullscreenDetent` and/or `MediumDetent` are used those properties will work.
 
 \*\* iOS doesn't give any access to the grabber view
+
+\*\*\* On Android, setting a custom corner radius will prevent the radius animation when the sheet hits the top of the screen
 
 ## Detents:
 
@@ -254,42 +257,7 @@ You can either add `IsDefault="True"` to the detent or set `SelectedDetent` to o
 
 ## How do I change the corner radius?
 
-This will be different on Android and iOS as they each provide their own design implementation
-
-On iOS
-
-```cs
-var sheet = new MySheet();
-sheet.Showing += (s, e) =>
-{
-    sheet.Controller.SheetPresentationController.PreferredCornerRadius = 2;
-};
-sheet.ShowAsync(Window);
-```
-
-On Android (Using Android styles). In your `Platforms/Android/Resources/values/themes.xml` (or equivalent) add the following styles
-
-```xml
-<style name="ThemeOverlay.App.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
-    <item name="bottomSheetStyle">@style/ModalBottomSheetDialog</item>
-</style>
-
-<style name="ModalBottomSheetDialog" parent="Widget.Material3.BottomSheet.Modal">
-    <item name="shapeAppearance">@style/ShapeAppearance.App.LargeComponent</item>
-</style>
-
-<style name="ShapeAppearance.App.LargeComponent" parent="ShapeAppearance.Material3.LargeComponent">
-    <item name="cornerFamily">rounded</item>
-    <item name="cornerSize">2dp</item>
-</style>
-```
-
-And in your `<style name="Maui.MainTheme" ...>` add the following item:
-
-
-```xml
-<item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheetDialog</item>
-```
+Use the `CornerRadius` property.
 
 # Implementation details
 

@@ -30,4 +30,9 @@ public partial class BottomSheetHandler
     {
         view.Controller.UpdateHasBackdrop();
     }
+
+    partial void PlatformUpdateCornerRadius(BottomSheet view)
+    {
+        view.Controller.UpdateBackground();
+    }
 }

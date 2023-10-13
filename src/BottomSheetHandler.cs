@@ -21,7 +21,13 @@ public partial class BottomSheetHandler : ContentViewHandler
             [nameof(BottomSheet.HandleColor)] = MapHandleColor,
             [nameof(BottomSheet.HasBackdrop)] = MapHasBackdrop,
             [nameof(BottomSheet.SelectedDetent)] = MapSelectedDetent,
+            [nameof(BottomSheet.CornerRadius)] = MapCornerRadius,
         };
+
+    static void MapCornerRadius(BottomSheetHandler handler, BottomSheet sheet)
+    {
+        handler.PlatformUpdateCornerRadius(sheet);
+    }
 
     static void MapHasBackdrop(BottomSheetHandler handler, BottomSheet sheet)
     {
@@ -58,6 +64,7 @@ public partial class BottomSheetHandler : ContentViewHandler
     partial void PlatformUpdateHandleColor(BottomSheet view);
     partial void PlatformUpdateHasBackdrop(BottomSheet view);
     partial void PlatformUpdateSelectedDetent(BottomSheet view);
+    partial void PlatformUpdateCornerRadius(BottomSheet view);
     partial void Dismiss(BottomSheet view, object request);
 
     public BottomSheetHandler() : base(Mapper, CommandMapper)

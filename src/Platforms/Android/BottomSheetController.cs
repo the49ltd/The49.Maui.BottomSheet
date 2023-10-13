@@ -189,6 +189,8 @@ public class BottomSheetController
     BottomSheetDragHandleView _handle;
     bool? _isBackgroundLight;
 
+    public ViewGroup Frame => _frame;
+
     public BottomSheetBehavior Behavior => _behavior;
 
     IMauiContext _mauiContext { get; }
@@ -282,23 +284,48 @@ public class BottomSheetController
     internal void UpdateBackground()
     {
         Paint paint = _sheet.BackgroundBrush;
-        if (_frame != null && paint != null)
+        if (Frame is not null)
         {
-            _frame.BackgroundTintList = ColorStateList.ValueOf(paint.ToColor().ToPlatform());
+            if (_sheet.CornerRadius != -1)
+            {
+                SheetRadiusDrawable drawable;
+                if (Frame.Background is not SheetRadiusDrawable)
+                {
+                    drawable = new SheetRadiusDrawable();
+                    Frame.Background = drawable;
+                }
+                else
+                {
+                    drawable = (SheetRadiusDrawable)Frame.Background;
+                }
+                drawable.SetCornerRadius(Frame.Context.ToPixels(_sheet.CornerRadius));
+            }
+            if (paint is not null)
+            {
+                var platformColor = paint.ToColor().ToPlatform();
+                if (Frame.Background is SheetRadiusDrawable sheetDrawable)
+                {
+                    sheetDrawable.SetColor(platformColor);
+                }
+                else
+                {
+                    Frame.BackgroundTintList = ColorStateList.ValueOf(platformColor);
+                }
+            }
         }
         // Try to find the background color to automatically change the status bar icons so they will
         // still be visible when the bottomsheet slides underneath the status bar.
-        ColorStateList backgroundTint = ViewCompat.GetBackgroundTintList(_frame);
+        ColorStateList backgroundTint = ViewCompat.GetBackgroundTintList(Frame);
 
         if (backgroundTint != null)
         {
             // First check for a tint
             _isBackgroundLight = MaterialColors.IsColorLight(backgroundTint.DefaultColor);
         }
-        else if (_frame.Background is ColorDrawable)
+        else if (Frame.Background is ColorDrawable)
         {
             // Then check for the background color
-            _isBackgroundLight = MaterialColors.IsColorLight(((ColorDrawable)_frame.Background).Color);
+            _isBackgroundLight = MaterialColors.IsColorLight(((ColorDrawable)Frame.Background).Color);
         }
         else
         {
@@ -534,7 +561,6 @@ public class BottomSheetController
 
         _frame.AddView(c);
 
-        UpdateBackground();
         UpdateHasBackdrop();
         UpdateHandleColor();
 
@@ -551,6 +577,7 @@ public class BottomSheetController
             CalculateHeights(GetAvailableHeight());
             CalculateStates();
             Layout();
+            UpdateBackground();
 
             var state = GetStateForDetent(_sheet.SelectedDetent);
 

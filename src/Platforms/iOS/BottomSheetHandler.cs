@@ -32,4 +32,8 @@ public partial class BottomSheetHandler
             view.Controller.UpdateSelectedDetent();
         }
     }
+    partial void PlatformUpdateCornerRadius(BottomSheet view)
+    {
+        view.Controller.UpdateCornerRadius(view.CornerRadius);
+    }
 }

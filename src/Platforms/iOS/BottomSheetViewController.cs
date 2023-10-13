@@ -1,4 +1,5 @@
-﻿using System.Runtime.Versioning;
+﻿using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using Foundation;
 using Microsoft.Maui.Platform;
 using UIKit;
@@ -116,7 +117,7 @@ public class BottomSheetViewController : UIViewController
     {
         if (!OperatingSystem.IsIOSVersionAtLeast(15))
         {
-            return null; ;
+            return null;
         }
         var detents = _sheet.GetEnabledDetents();
         return SheetPresentationController.SelectedDetentIdentifier switch
@@ -131,6 +132,15 @@ public class BottomSheetViewController : UIViewController
     internal void UpdateSelectedDetent()
     {
         _sheet.SelectedDetent = GetSelectedDetent();
+    }
+
+    internal void UpdateCornerRadius(double cornerRadius)
+    {
+        if (!OperatingSystem.IsIOSVersionAtLeast(15))
+        {
+            return;
+        }
+        SheetPresentationController.PreferredCornerRadius = (NFloat)cornerRadius;
     }
 }
 

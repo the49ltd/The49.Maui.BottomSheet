@@ -107,6 +107,12 @@ public partial class MainPage : ContentPage
         },
         new DemoEntry
         {
+            Title = "Corner radius",
+            Description = "specify a Corner radius for the sheet",
+            Command = new Command(OpenCornerRadius),
+        },
+        new DemoEntry
+        {
             Title = "Background color",
             Description = "specify a BackgroundColor for the sheet",
             Command = new Command(OpenBackgroundSheet),
@@ -246,6 +252,19 @@ public partial class MainPage : ContentPage
             new AnchorDetent { Anchor = page.Divider },
         };
         page.Background = Colors.Salmon;
+        page.ShowAsync(Window);
+    }
+    void OpenCornerRadius()
+    {
+        var page = new SimplePage();
+        page.Detents = new DetentsCollection()
+        {
+            new FullscreenDetent(),
+            new ContentDetent(),
+            new AnchorDetent { Anchor = page.Divider },
+        };
+        page.Background = Colors.Salmon;
+        page.CornerRadius = 4;
         page.ShowAsync(Window);
     }
     private void OpenRatioSheet()

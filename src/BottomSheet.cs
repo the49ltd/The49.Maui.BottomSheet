@@ -20,6 +20,7 @@ public partial class BottomSheet : ContentView
     public static readonly BindableProperty HandleColorProperty = BindableProperty.Create(nameof(HandleColor), typeof(Color), typeof(BottomSheet), null);
     public static readonly BindableProperty IsCancelableProperty = BindableProperty.Create(nameof(IsCancelable), typeof(bool), typeof(BottomSheet), true);
     public static readonly BindableProperty SelectedDetentProperty = BindableProperty.Create(nameof(SelectedDetent), typeof(Detent), typeof(BottomSheet), null, BindingMode.TwoWay);
+    public static readonly BindableProperty CornerRadiusProperty = BindableProperty.Create(nameof(CornerRadius), typeof(double), typeof(BottomSheet), -1d);
 
     //public event EventHandler<float> Sliding;
     public event EventHandler<DismissOrigin>? Dismissed;
@@ -62,6 +63,12 @@ public partial class BottomSheet : ContentView
     {
         get => (Detent?)GetValue(SelectedDetentProperty);
         set => SetValue(SelectedDetentProperty, value);
+    }
+
+    public double CornerRadius
+    {
+        get => (double)GetValue(CornerRadiusProperty);
+        set => SetValue(CornerRadiusProperty, value);
     }
 
     public BottomSheet() : base()
