@@ -348,7 +348,7 @@ public class BottomSheetController
 
     static void EnsureStayOnFrontView(Context context)
     {
-        if (_stayOnFront is null)
+        if (_stayOnFront is null || !_stayOnFront.IsAttachedToWindow)
         {
             _stayOnFront = new StayOnFrontView(context);
             var window = ((AppCompatActivity)context).Window;
@@ -597,10 +597,13 @@ public class BottomSheetController
 
     void OnLayoutChange(object sender, AView.LayoutChangeEventArgs e)
     {
-        CalculateHeights(GetAvailableHeight());
-        CalculateStates();
-        ResizeVirtualView();
-        Layout();
+        _sheet.Dispatcher.Dispatch(() =>
+        {
+            CalculateHeights(GetAvailableHeight());
+            CalculateStates();
+            ResizeVirtualView();
+            Layout();
+        });
     }
 
     void Callback_StateChanged(object sender, EventArgs e)
