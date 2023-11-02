@@ -408,7 +408,7 @@ public class BottomSheetController
     {
         get
         {
-            if (OperatingSystem.IsAndroidVersionAtLeast(23))
+            if (OperatingSystem.IsAndroidVersionAtLeast(23) && _windowContainer.RootWindowInsets is not null)
             {
                 return WindowInsetsCompat.ToWindowInsetsCompat(_windowContainer.RootWindowInsets);
             }
