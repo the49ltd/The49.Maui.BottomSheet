@@ -5,8 +5,7 @@
              xmlns:sample="clr-namespace:The49.Maui.BottomSheet.Sample"
              x:Class="The49.Maui.BottomSheet.Sample.MainPage"
              x:Name="this"
-             NavigationPage.HasNavigationBar="False"
-             >
+             NavigationPage.HasNavigationBar="False">
     <ContentPage.Resources>
         <Style TargetType="Grid">
             <Setter Property="VisualStateManager.VisualStateGroups">

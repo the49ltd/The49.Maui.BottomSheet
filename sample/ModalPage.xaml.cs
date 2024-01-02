@@ -9,8 +9,8 @@ public partial class ModalPage : ContentPage
 		InitializeComponent();
 	}
 
-    void Button_Clicked(object sender, EventArgs e)
-    {
+	void Button_Clicked(object sender, EventArgs e)
+	{
 		var s = new SimplePage();
 
 		s.Detents = new List<Detent>
@@ -20,5 +20,5 @@ public partial class ModalPage : ContentPage
 		};
 
 		s.ShowAsync(Window);
-    }
+	}
 }

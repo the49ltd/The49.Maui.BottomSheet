@@ -6,21 +6,34 @@
              Title="ChatPage"
              x:Name="this">
     <ContentPage.Resources>
-        <the49:BottomSheet x:Key="sheet" x:Name="sheet" BindingContext="{x:Reference this}" IsCancelable="False" Padding="8">
+        <the49:BottomSheet x:Key="sheet"
+                           x:Name="sheet"
+                           BindingContext="{x:Reference this}"
+                           IsCancelable="False"
+                           Padding="8">
             <Grid ColumnDefinitions="*, Auto">
-                <Editor x:Name="editor" AutoSize="TextChanges" />
-                <Button Text=">" Clicked="Button_Clicked" Grid.Column="1" CornerRadius="22" HeightRequest="44" WidthRequest="44" />
+                <Editor x:Name="editor"
+                        AutoSize="TextChanges" />
+                <Button Text=">"
+                        Clicked="Button_Clicked"
+                        Grid.Column="1"
+                        CornerRadius="22"
+                        HeightRequest="44"
+                        WidthRequest="44" />
             </Grid>
         </the49:BottomSheet>
     </ContentPage.Resources>
-    <CollectionView ItemsSource="{Binding Messages}" BindingContext="{x:Reference this}">
+    <CollectionView ItemsSource="{Binding Messages}"
+                    BindingContext="{x:Reference this}">
         <CollectionView.ItemsLayout>
-            <LinearItemsLayout Orientation="Vertical" ItemSpacing="8" />
+            <LinearItemsLayout Orientation="Vertical"
+                               ItemSpacing="8" />
         </CollectionView.ItemsLayout>
         <CollectionView.ItemTemplate>
             <DataTemplate>
                 <ContentView>
-                    <Border Padding="8" HorizontalOptions="End">
+                    <Border Padding="8"
+                            HorizontalOptions="End">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="16, 16, 16, 0" />
                         </Border.StrokeShape>
