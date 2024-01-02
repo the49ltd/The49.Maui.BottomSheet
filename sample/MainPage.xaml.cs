@@ -455,16 +455,6 @@ public partial class MainPage : ContentPage
         Header.TranslationY = Math.Max(-e.VerticalOffset, -72);
     }
 
-    void TapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
-    {
-        var item = (DemoEntry)((BindableObject)sender).BindingContext;
-        if (item == null)
-        {
-            return;
-        }
-        item.Command.Execute(null);
-    }
-
     void Button_Clicked(object sender, EventArgs e)
     {
         Shell.Current.GoToAsync("//ModalPage");
