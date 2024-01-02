@@ -11,6 +11,9 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>annotations</Nullable>
 
+		<!-- Do not warn about Microsoft.Maui.Controls and Microsoft.Maui.Controls.Compatibility anymore -->
+		<SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
+
 		<VersionPrefix>1.0.4</VersionPrefix>
 		<VersionSuffix></VersionSuffix>
 
