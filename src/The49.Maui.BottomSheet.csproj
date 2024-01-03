@@ -38,8 +38,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="M.BindableProperty.Generator" Version="0.11.1" PrivateAssets="all" />
-		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+		<PackageReference Include="M.BindableProperty.Generator" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.Maui.Controls" />
 	</ItemGroup>
 
 	<ItemGroup>
