@@ -39,6 +39,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="M.BindableProperty.Generator" Version="0.11.1" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 	</ItemGroup>
 
 	<ItemGroup>
