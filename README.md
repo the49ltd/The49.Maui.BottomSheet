@@ -161,7 +161,7 @@ Example:
         <!-- Stop at 120dp -->
         <the49:HeightDetent Height="120" />
         <!-- Stop at 45% of the screen height -->
-        <the49:RatioDetent Height="0.45" />
+        <the49:RatioDetent Ratio="0.45" />
         <!-- Stop at the height of the divider view -->
         <the49:AnchorDetent Anchor="{x:Reference divider}" />
     </the49:BottomSheet.Detents>
