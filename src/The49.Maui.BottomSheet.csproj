@@ -1,14 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net7.0;net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>
+		<TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
 		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
-		<!-- <TargetFrameworks>$(TargetFrameworks);net7.0-tizen</TargetFrameworks> -->
+		<!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
 		<RootNamespace>The49.Maui.BottomSheet</RootNamespace>
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>annotations</Nullable>
+
+		<!-- Do not warn about Microsoft.Maui.Controls and Microsoft.Maui.Controls.Compatibility anymore -->
+		<SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
 
 		<VersionPrefix>1.0.4</VersionPrefix>
 		<VersionSuffix></VersionSuffix>
@@ -36,37 +40,26 @@
 	</PropertyGroup>
 
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-ios|AnyCPU'">
-	  <CreatePackage>false</CreatePackage>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
+		<CreatePackage>false</CreatePackage>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Folder Include="Platforms\MacCatalyst\" />
-	  <Folder Include="Platforms\Tizen\" />
-	  <Folder Include="Platforms\Windows\" />
-	  <Folder Include="Platforms\iOS\Models\" />
+		<PackageReference Include="M.BindableProperty.Generator" Version="0.11.1" PrivateAssets="all" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="M.BindableProperty.Generator" Version="0.9.3" PrivateAssets="all" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Remove="Platforms\iOS\Models\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Include="..\LICENSE.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-	  <None Include="..\NUGET-README.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-	  <None Include="..\The49.Maui.BottomSheet.Logo.png">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+		<None Include="..\LICENSE.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\NUGET-README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\The49.Maui.BottomSheet.Logo.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 	</ItemGroup>
 </Project>

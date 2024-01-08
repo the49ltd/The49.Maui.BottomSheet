@@ -5,15 +5,14 @@ namespace The49.Maui.BottomSheet.Sample;
 
 public partial class ChatPage : ContentPage
 {
-
-	ObservableCollection<string> _messages = new ObservableCollection<string>();
+	ObservableCollection<string> messages = new ObservableCollection<string>();
 
 	public ObservableCollection<string> Messages
 	{
-		get => _messages;
+		get => messages;
 		set
 		{
-			_messages = value;
+			messages = value;
 			OnPropertyChanged();
 		}
 	}
@@ -22,23 +21,23 @@ public partial class ChatPage : ContentPage
 		InitializeComponent();
 	}
 
-    protected override void OnAppearing()
-    {
-        base.OnAppearing();
+	protected override void OnAppearing()
+	{
+		base.OnAppearing();
 		sheet.ShowAsync();
-    }
+	}
 
-    protected override void OnDisappearing()
-    {
-        base.OnDisappearing();
+	protected override void OnDisappearing()
+	{
+		base.OnDisappearing();
 		sheet.DismissAsync();
-    }
+	}
 
-    void Button_Clicked(object sender, EventArgs e)
-    {
+	void Button_Clicked(object sender, EventArgs e)
+	{
 		Messages.Add(editor.Text);
 		editor.Text = "";
 		editor.Unfocus();
 		KeyboardExtensions.HideKeyboardAsync(editor, CancellationToken.None);
-    }
+	}
 }

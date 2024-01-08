@@ -5,6 +5,7 @@
              Title="ModalPage"
              Shell.PresentationMode="ModalAnimated">
     <VerticalStackLayout>
-        <Button Text="Open sheet" Clicked="Button_Clicked" />
+        <Button Text="Open sheet"
+                Clicked="Button_Clicked" />
     </VerticalStackLayout>
 </ContentPage>

@@ -1,6 +1,6 @@
 ﻿namespace The49.Maui.BottomSheet;
 
-internal partial class BottomSheetManager
+partial class BottomSheetManager
 {
     internal static void Show(Window window, BottomSheet sheet, bool animated)
     {

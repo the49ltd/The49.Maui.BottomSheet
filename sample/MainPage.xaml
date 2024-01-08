@@ -2,10 +2,10 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:the49="https://schemas.the49.com/dotnet/2023/maui"
+             xmlns:sample="clr-namespace:The49.Maui.BottomSheet.Sample"
              x:Class="The49.Maui.BottomSheet.Sample.MainPage"
              x:Name="this"
-             NavigationPage.HasNavigationBar="False"
-             >
+             NavigationPage.HasNavigationBar="False">
     <ContentPage.Resources>
         <Style TargetType="Grid">
             <Setter Property="VisualStateManager.VisualStateGroups">
@@ -24,32 +24,38 @@
         </Style>
     </ContentPage.Resources>
     <Grid RowDefinitions="Auto, *">
-        <HorizontalStackLayout Padding="16, 0, 0, 8" BackgroundColor="{StaticResource Primary}" x:Name="Header">
-            <Label
-                Text="Maui.BottomSheet"
-                Style="{StaticResource HeadlineLarge}"
-                TextColor="{StaticResource White}"
-                VerticalOptions="End" />
-            <Button Text="OpenModalPage" Clicked="Button_Clicked" />
+        <HorizontalStackLayout Padding="16, 0, 0, 8"
+                               BackgroundColor="{StaticResource Primary}"
+                               x:Name="Header">
+            <Label Text="Maui.BottomSheet"
+                   Style="{StaticResource HeadlineLarge}"
+                   TextColor="{StaticResource White}"
+                   VerticalOptions="End" />
+            <Button Text="OpenModalPage"
+                    Clicked="Button_Clicked" />
         </HorizontalStackLayout>
-        <RefreshView Grid.Row="1" IsEnabled="False">
-            <ListView BackgroundColor="Transparent" Scrolled="list_Scrolled" ItemsSource="{Binding Demos, Source={x:Reference this}}" SelectionMode="Single" x:Name="list" HasUnevenRows="True">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <Grid ColumnDefinitions="Auto, *" Padding="16, 4" HeightRequest="72">
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" />
-                                </Grid.GestureRecognizers>
-                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                                    <Label Text="{Binding Title}" Style="{StaticResource BodyLarge}" />
-                                    <Label Text="{Binding Description}" Style="{StaticResource BodyMedium}" />
-                                </VerticalStackLayout>
-                            </Grid>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </RefreshView>
+        <CollectionView Grid.Row="1"
+                        BackgroundColor="Transparent"
+                        Scrolled="list_Scrolled"
+                        ItemsSource="{Binding Demos, Source={x:Reference this}}"
+                        SelectionMode="Single"
+                        SelectionChanged="list_SelectionChanged"
+                        x:Name="list">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="sample:DemoEntry">
+                    <Grid ColumnDefinitions="Auto, *"
+                          Padding="16, 4"
+                          HeightRequest="72">
+                        <VerticalStackLayout Grid.Column="1"
+                                             VerticalOptions="Center">
+                            <Label Text="{Binding Title}"
+                                   Style="{StaticResource BodyLarge}" />
+                            <Label Text="{Binding Description}"
+                                   Style="{StaticResource BodyMedium}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
     </Grid>
 </ContentPage>
