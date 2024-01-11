@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31611.283
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "The49.Maui.BottomSheet.Sample", "The49.Maui.BottomSheet.Sample.csproj", "{44F336B4-1250-43B6-B263-B22D6B436FCF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "The49.Maui.BottomSheet.Sample", "sample\The49.Maui.BottomSheet.Sample.csproj", "{44F336B4-1250-43B6-B263-B22D6B436FCF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "The49.Maui.BottomSheet", "..\src\The49.Maui.BottomSheet.csproj", "{A22AD19E-5552-44A8-81CE-7ACEC76F6822}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "The49.Maui.BottomSheet", "src\The49.Maui.BottomSheet.csproj", "{A22AD19E-5552-44A8-81CE-7ACEC76F6822}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8A921141-CFBB-4A46-8C99-9D3D3F36333B}"
 	ProjectSection(SolutionItems) = preProject
-		..\Directory.Packages.props = ..\Directory.Packages.props
+		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Global

@@ -1,17 +1,17 @@
 <Project>
-	<PropertyGroup>
-		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-		<!--
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!--
     NOTE: if errors in VS occur due to restoring packages that are defined properly here,
     run dotnet restore from the sample folder and / or the src folder.
     -->
-	</PropertyGroup>
-	<ItemGroup>
-		<PackageVersion Include="CommunityToolkit.Maui" Version="7.0.1" />
-		<PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
-		<PackageVersion Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
-		<PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
-		<PackageVersion Include="The49.Maui.Insets" Version="1.0.0-alpha6" />
-		<PackageVersion Include="M.BindableProperty.Generator" Version="0.11.1" />
-	</ItemGroup>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="CommunityToolkit.Maui" Version="7.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+    <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+    <PackageVersion Include="The49.Maui.Insets" Version="1.0.0-alpha7" />
+    <PackageVersion Include="M.BindableProperty.Generator" Version="0.11.1" />
+  </ItemGroup>
 </Project>

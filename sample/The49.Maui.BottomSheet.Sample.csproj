@@ -15,7 +15,6 @@
 
 		<!-- App Identifier -->
 		<ApplicationId>com.the49.maui.bottomsheet</ApplicationId>
-		<ApplicationIdGuid>dea15a5a-6a99-4de2-b6ff-8e834a7e246d</ApplicationIdGuid>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -61,35 +60,4 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\src\The49.Maui.BottomSheet.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Compile Update="DemoPages\SizingTest.xaml.cs">
-	    <DependentUpon>SizingTest.xaml</DependentUpon>
-	  </Compile>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiXaml Update="ChatPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="DemoPages\EntrySheet.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="DemoPages\SizingTest.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="DemoPages\ScrollSheet.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="DemoPages\SheetWithModalPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="DemoPages\SimplePage.xaml">
-	    <Generator></Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="ModalPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	</ItemGroup>
-
 </Project>
