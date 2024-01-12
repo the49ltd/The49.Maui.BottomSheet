@@ -620,8 +620,8 @@ public class BottomSheetController
         }
         if (Behavior.State == BottomSheetBehavior.StateHidden)
         {
-            _sheet.NotifyDismissed();
             Dispose();
+            _sheet.NotifyDismissed();
         }
         ((BottomSheetHandler)_sheet.Handler).UpdateSelectedDetent(_sheet);
     }

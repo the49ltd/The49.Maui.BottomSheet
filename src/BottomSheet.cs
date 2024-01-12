@@ -1,5 +1,7 @@
 ﻿#nullable enable
 
+using Microsoft.Maui.Controls;
+
 namespace The49.Maui.BottomSheet;
 
 public enum DismissOrigin
@@ -100,7 +102,7 @@ public partial class BottomSheet : ContentView
         {
             SelectedDetent = GetDefaultDetent();
         }
-
+        window.AddLogicalChild(this);
         BottomSheetManager.Show(window, this, animated);
         return completionSource.Task;
     }
@@ -143,6 +145,7 @@ public partial class BottomSheet : ContentView
 
     internal void NotifyDismissed()
     {
+        this.Parent.RemoveLogicalChild(this);
         Dismissed?.Invoke(this, _dismissOrigin);
     }
 
