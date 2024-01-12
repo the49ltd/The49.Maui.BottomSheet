@@ -37,7 +37,7 @@ jobs:
           global-json-file: global.json
 
       - name: Install MAUI Workload
-        run: dotnet workload install maui-android
+        run: dotnet workload install maui
 
       - name: Restore Dependencies
         run: dotnet restore The49.Maui.BottomSheet.sln
@@ -65,7 +65,7 @@ jobs:
           global-json-file: global.json
 
       - name: Install MAUI Workload
-        run: dotnet workload install maui-ios
+        run: dotnet workload install maui
 
       - name: Restore Dependencies
         run: dotnet restore The49.Maui.BottomSheet.sln
