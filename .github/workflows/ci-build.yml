@@ -52,8 +52,9 @@ jobs:
           path: sample/bin/Release/net8.0-android/*Signed.a*
 
   # MAUI iOS Build
+  # also see https://stackoverflow.com/questions/77641536/how-do-i-build-my-net-8-maui-ios-app-using-xcode-15-in-azure-devops
   build-ios:
-    runs-on: macos-latest
+    runs-on: macos-13 # beta, macos-latest is currently alias to macos-12
     name: iOS Build
     steps:
       - name: Checkout
@@ -63,6 +64,9 @@ jobs:
         uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3
         with:
           global-json-file: global.json
+
+      - name: Select Xcode 15.1
+        run: sudo xcode-select -s /Applications/Xcode_15.1.app
 
       - name: Install MAUI Workload
         run: dotnet workload install maui
