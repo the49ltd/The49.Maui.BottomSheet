@@ -1,0 +1,80 @@
+# this is based on https://github.com/irongut/MauiBeach/blob/master/.github/workflows/ci-build.yml
+# this might be useful, too:
+# https://github.com/dotnet/maui-samples/blob/main/8.0/Apps/WeatherTwentyOne/devops/GitHubActions/
+
+name: CI Build
+
+on:
+  pull_request:
+    branches:
+      - main
+  #   push:
+  #     # this will trigger a build on any tag push - you can optionally specify a tag format here
+  #     tags:
+  #       - "*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true # Disable the .NET logo
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true # Disable the .NET first time experience
+  DOTNET_CLI_TELEMETRY_OPTOUT: true # Disable sending .NET CLI telemetry
+
+jobs:
+  # MAUI Android Build
+  build-android:
+    runs-on: ubuntu-latest
+    name: Android Build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+
+      - name: Setup .NET according to global.json
+        uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3
+        with:
+          global-json-file: global.json
+
+      - name: Install MAUI Workload
+        run: dotnet workload install maui-android
+
+      - name: Restore Dependencies
+        run: dotnet restore The49.Maui.BottomSheet.sln
+
+      - name: Build MAUI Android
+        run: dotnet publish sample/The49.Maui.BottomSheet.Sample.csproj -c Release -f net8.0-android --no-restore
+
+      - name: Upload Android Artifact
+        uses: actions/upload-artifact@1eb3cb2b3e0f29609092a73eb033bb759a334595
+        with:
+          name: bottomsheet-android-ci-build
+          path: sample/bin/Release/net8.0-android/*Signed.a*
+
+  # MAUI iOS Build
+  build-ios:
+    runs-on: macos-latest
+    name: iOS Build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+
+      - name: Setup .NET according to global.json
+        uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3
+        with:
+          global-json-file: global.json
+
+      - name: Install MAUI Workload
+        run: dotnet workload install maui-ios
+
+      - name: Restore Dependencies
+        run: dotnet restore The49.Maui.BottomSheet.sln
+
+      - name: Build MAUI iOS
+        run: dotnet build sample/The49.Maui.BottomSheet.Sample.csproj -c Release -f net8.0-ios --no-restore /p:buildForSimulator=True /p:packageApp=True /p:ArchiveOnBuild=False
+
+      - name: Upload iOS Artifact
+        uses: actions/upload-artifact@1eb3cb2b3e0f29609092a73eb033bb759a334595
+        with:
+          name: bottomsheet-ios-ci-build
+          path: sample/bin/Release/net8.0-ios/iossimulator-x64/**/*.app
