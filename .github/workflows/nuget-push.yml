@@ -1,0 +1,45 @@
+# this is based on https://github.com/irongut/MauiBeach/blob/master/.github/workflows/ci-build.yml
+# this might be useful, too:
+# https://github.com/dotnet/maui-samples/blob/main/8.0/Apps/WeatherTwentyOne/devops/GitHubActions/
+
+name: Nuget push
+
+on:
+   push:
+     tags:
+       - "*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true # Disable the .NET logo
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true # Disable the .NET first time experience
+  DOTNET_CLI_TELEMETRY_OPTOUT: true # Disable sending .NET CLI telemetry
+
+jobs:
+  # Check if it even builds
+  sanity-check-build:
+    runs-on: macos-13
+    name: Build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+
+      - name: Select Xcode 15.1
+        run: sudo xcode-select -s /Applications/Xcode_15.1.app
+
+      - name: Setup .NET according to global.json
+        uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3
+        with:
+          global-json-file: global.json
+
+      - name: Install MAUI Workload
+        run: dotnet workload install maui
+
+      - name: Build package
+        run: dotnet pack -c Release src/The49.Maui.BottomSheet.csproj
+
+      - name: Publish
+        run: nuget src/bin/Debug/The49.Maui.BottomSheet.*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
