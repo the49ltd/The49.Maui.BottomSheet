@@ -42,4 +42,4 @@ jobs:
         run: dotnet pack -c Release src/The49.Maui.BottomSheet.csproj
 
       - name: Publish
-        run: nuget src/bin/Debug/The49.Maui.BottomSheet.*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
+        run: nuget src/bin/Release/*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
