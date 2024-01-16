@@ -27,7 +27,7 @@ env:
 jobs:
   # MAUI Android Build
   build-android:
-    runs-on: ubuntu-latest
+    runs-on: macos-13
     name: Build
     steps:
       - name: Checkout
