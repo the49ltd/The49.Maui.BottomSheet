@@ -5,9 +5,9 @@
 name: Nuget push
 
 on:
-   push:
-     tags:
-       - "*"
+  push:
+    tags:
+      - "*"
   workflow_dispatch:
 
 permissions:
