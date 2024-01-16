@@ -25,8 +25,8 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: true # Disable sending .NET CLI telemetry
 
 jobs:
-  # MAUI Android Build
-  build-android:
+  # Check if it even builds
+  sanity-check-build:
     runs-on: macos-13
     name: Build
     steps:
@@ -41,5 +41,5 @@ jobs:
       - name: Install MAUI Workload
         run: dotnet workload install maui
 
-      - name: Restore Dependencies
+      - name: Build package
         run: dotnet build src/The49.Maui.BottomSheet.csproj
