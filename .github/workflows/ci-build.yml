@@ -45,7 +45,7 @@ jobs:
         run: dotnet workload install maui
 
       - name: Build package
-        run: dotnet pack -c Debug src/The49.Maui.BottomSheet.csproj /p:VersionSuffix="pr-${{ github.event.number }}"
+        run: dotnet pack -c Debug src/The49.Maui.BottomSheet.csproj /p:VersionSuffix="-pr-${{ github.event.number }}"
 
       - name: Upload iOS Artifact
         uses: actions/upload-artifact@1eb3cb2b3e0f29609092a73eb033bb759a334595
