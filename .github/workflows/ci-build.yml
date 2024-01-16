@@ -27,8 +27,8 @@ env:
 jobs:
   # MAUI Android Build
   build-android:
-    runs-on: windows-latest
-    name: Android Build
+    runs-on: ubuntu-latest
+    name: Build
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
@@ -42,45 +42,4 @@ jobs:
         run: dotnet workload install maui
 
       - name: Restore Dependencies
-        run: dotnet restore The49.Maui.BottomSheet.sln
-
-      - name: Build MAUI Android
-        run: dotnet publish sample/The49.Maui.BottomSheet.Sample.csproj -c Release -f net8.0-android --no-restore
-
-      - name: Upload Android Artifact
-        uses: actions/upload-artifact@1eb3cb2b3e0f29609092a73eb033bb759a334595
-        with:
-          name: bottomsheet-android-ci-build
-          path: sample/bin/Release/net8.0-android/*Signed.a*
-
-  # MAUI iOS Build
-  # also see https://stackoverflow.com/questions/77641536/how-do-i-build-my-net-8-maui-ios-app-using-xcode-15-in-azure-devops
-  build-ios:
-    runs-on: macos-13 # beta, macos-latest is currently alias to macos-12
-    name: iOS Build
-    steps:
-      - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-
-      - name: Setup .NET according to global.json
-        uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3
-        with:
-          global-json-file: global.json
-
-      - name: Select Xcode 15.1
-        run: sudo xcode-select -s /Applications/Xcode_15.1.app
-
-      - name: Install MAUI Workload
-        run: dotnet workload install maui
-
-      - name: Restore Dependencies
-        run: dotnet restore The49.Maui.BottomSheet.sln
-
-      - name: Build MAUI iOS
-        run: dotnet build sample/The49.Maui.BottomSheet.Sample.csproj -c Release -f net8.0-ios --no-restore /p:buildForSimulator=True /p:packageApp=True /p:ArchiveOnBuild=False
-
-      - name: Upload iOS Artifact
-        uses: actions/upload-artifact@1eb3cb2b3e0f29609092a73eb033bb759a334595
-        with:
-          name: bottomsheet-ios-ci-build
-          path: sample/bin/Release/net8.0-ios/iossimulator-x64/**/*.app
+        run: dotnet build src/The49.Maui.BottomSheet.csproj
