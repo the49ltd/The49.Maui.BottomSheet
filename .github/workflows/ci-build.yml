@@ -5,11 +5,9 @@
 name: CI Build
 
 on:
-  push:
   pull_request:
     branches:
       - main
-      - ci-cd
   #   push:
   #     # this will trigger a build on any tag push - you can optionally specify a tag format here
   #     tags:
