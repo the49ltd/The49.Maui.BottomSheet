@@ -1,7 +1,11 @@
+<img src="./The49.Maui.BottomSheet.TitleLogo.svg?raw=true" height="64" />
+
+[![NuGet Version](https://img.shields.io/nuget/v/The49.Maui.BottomSheet)](https://www.nuget.org/packages/The49.Maui.BottomSheet)
+
 > **NOTE**: Coming from Gerald Versluis' video? Make sure to check the section on [what changed since the video was made](#changes-since-gerald-versluis-video)
 
 
-<img src="./The49.Maui.BottomSheet.TitleLogo.svg?raw=true" height="64" />
+
 
 # What is Maui.BottomSheet?
 
