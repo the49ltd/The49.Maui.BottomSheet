@@ -13,7 +13,7 @@ public partial class BottomSheetHandler
 
     partial void Dismiss(BottomSheet view, object request)
     {
-        view.Controller?.Dismiss((bool)request);
+        view?.Controller?.Dismiss((bool)request);
     }
 
     partial void PlatformUpdateSelectedDetent(BottomSheet view)
