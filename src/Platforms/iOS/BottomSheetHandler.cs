@@ -13,8 +13,8 @@ public partial class BottomSheetHandler
 
     partial void Dismiss(BottomSheet view, object request)
     {
-        view.CachedDetents.Clear();
-        view.Controller?.DismissViewController((bool)request, view.NotifyDismissed);
+        view?.CachedDetents.Clear();
+        view?.Controller?.DismissViewController((bool)request, view.NotifyDismissed);
     }
 
     partial void PlatformMapSelectedDetent(BottomSheet view)
